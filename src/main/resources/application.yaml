@@ -1,0 +1,34 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: Restaurant
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:mysql://${restaurant.db.host}:3306/hmall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ${restaurant.db.password}
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
+  global-config:
+    db-config:
+      update-strategy: not_null
+      id-type: auto
+knife4j:
+  enable: true
+  openapi:
+    title: 接口文档
+    description: "接口文档"
+    email: 2354818484@outlook.com
+    concat: HolyWizard
+    url: https://www.baidu.com
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.holy.controller

@@ -1,0 +1,4 @@
+restaurant:
+  db:
+    host: localhost
+    password: 2354818484
