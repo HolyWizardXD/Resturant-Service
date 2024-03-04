@@ -6,22 +6,23 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("user")
-public class User {
+@TableName("employee")
+public class Employee {
 
     @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
-    // 用户名
-    private String username;
+    // 员工名
+    private String employeeName;
 
-    // 密码
-    private String password;
+    // 薪资
+    private float salary;
 
     // 手机号
     private String phone;
 
-    // 使用状态 1 正常 2 冻结
+    // 状态 1 启用 2 冻结
     private int status;
 
 }
+

@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
-@TableName("user")
-public class User {
+@TableName("customer")
+public class Customer {
 
     @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
-    // 用户名
-    private String username;
+    // 顾客名称
+    private String customerName;
 
     // 密码
     private String password;
@@ -21,7 +23,7 @@ public class User {
     // 手机号
     private String phone;
 
-    // 使用状态 1 正常 2 冻结
-    private int status;
+    // 创建时间
+    private LocalDateTime createTime;
 
 }

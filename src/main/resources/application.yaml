@@ -17,18 +17,3 @@ mybatis-plus:
     db-config:
       update-strategy: not_null
       id-type: auto
-knife4j:
-  enable: true
-  openapi:
-    title: 接口文档
-    description: "接口文档"
-    email: 2354818484@outlook.com
-    concat: HolyWizard
-    url: https://www.baidu.com
-    version: v1.0.0
-    group:
-      default:
-        group-name: default
-        api-rule: package
-        api-rule-resources:
-          - com.holy.controller
