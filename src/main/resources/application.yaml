@@ -6,7 +6,7 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://${restaurant.db.host}:3306/hmall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${restaurant.db.host}:3306/restaurant?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${restaurant.db.password}
