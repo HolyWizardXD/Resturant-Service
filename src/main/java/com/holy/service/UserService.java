@@ -6,4 +6,5 @@ public interface UserService {
 
     User selectUserByName(String username);
 
+    boolean register(User user);
 }

@@ -1,6 +1,10 @@
 server:
   port: 8080
 spring:
+  data:
+    redis:
+      host: ${restaurant.redis.host}
+      port: ${restaurant.redis.port}
   application:
     name: Restaurant
   profiles:
@@ -8,7 +12,7 @@ spring:
   datasource:
     url: jdbc:mysql://${restaurant.db.host}:3306/restaurant?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
+    username: ${restaurant.db.username}
     password: ${restaurant.db.password}
 mybatis-plus:
   configuration:

@@ -1,4 +1,8 @@
 restaurant:
   db:
     host: localhost
+    username: root
     password: 2354818484
+  redis:
+    host: localhost
+    port: 6379

@@ -8,27 +8,22 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("customer")
-public class Customer implements Serializable {
+@TableName("inventory")
+public class Inventory implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
-    // 顾客名称
-    private String customerName;
+    // 原料名
+    private String material;
 
-    // 密码
-    private String password;
+    // 数量 以斤为单位
+    private float stock;
 
-    // 手机号
-    private String phone;
-
-    // 创建时间
-    private LocalDateTime createTime;
-
+    // 照片
+    private String picture;
 }

@@ -1,6 +1,7 @@
 package com.holy.controller;
 
 import com.holy.domain.dto.LoginFormDTO;
+import com.holy.domain.dto.RegisterFormDTO;
 import com.holy.domain.po.Result;
 import com.holy.domain.po.User;
 import com.holy.domain.vo.UserLoginVO;
@@ -10,6 +11,7 @@ import com.holy.utils.JwtUtil;
 import com.holy.utils.Md5Util;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 @Tag(name = "用户相关接口")
 @RestController
+@Validated
 @RequestMapping("/user")
 public class UserController {
 
@@ -30,9 +33,8 @@ public class UserController {
 
     @Operation(summary = "用户登录接口")
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@RequestBody @Validated LoginFormDTO loginFormDTO){
-
-        // 获取loginFormDTO中的数据
+    public Result<UserLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO){
+        // 获取loginFormDTO用户登陆表单中的数据
         String username = loginFormDTO.getUsername();
         String password = loginFormDTO.getPassword();
         // 根据用户名查询用户
@@ -55,5 +57,31 @@ public class UserController {
         userLoginVO.setId(user.getId());
         userLoginVO.setUsername(user.getUsername());
         return Result.success(userLoginVO);
+    }
+
+    @Operation(summary = "用户注册接口")
+    @PostMapping("/register")
+    public Result register(@RequestBody @Valid RegisterFormDTO registerFormDTO){
+        // 获取registerFormDTO用户注册表单中的数据
+        String username = registerFormDTO.getUsername();
+        String password = registerFormDTO.getPassword();
+        String phone = registerFormDTO.getPhone();
+        // 查询用户是否已经存在
+        User user = userService.selectUserByName(username);
+        if (user == null) {return Result.error("该用户已经存在");}
+        // 加密密码
+        password = Md5Util.getMD5String(password);
+        // 封装User对象
+        User registerUser = new User()
+                .setStatus(1)
+                .setUsername(username)
+                .setPassword(password)
+                .setPhone(phone);
+        // 注册用户
+        if(userService.register(registerUser)) {
+            return Result.success("注册成功");
+        }else {
+            return Result.error("注册失败");
+        }
     }
 }

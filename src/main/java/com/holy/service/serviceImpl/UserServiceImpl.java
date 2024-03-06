@@ -18,4 +18,9 @@ public class UserServiceImpl implements UserService {
     public User selectUserByName(String username) {
         return new LambdaQueryChainWrapper<>(userMapper).eq(User::getUsername,username).one();
     }
+
+    @Override
+    public boolean register(User user) {
+        return userMapper.insert(user) > 0;
+    }
 }

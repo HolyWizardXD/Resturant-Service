@@ -4,10 +4,16 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 @TableName("dish")
-public class Dish {
+public class Dish implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private long id;
@@ -21,7 +27,13 @@ public class Dish {
     // 库存
     private String stock;
 
+    // 分类
+    private String classify;
+
     // 状态 1 启用 2 冻结
     private int status;
+
+    // 照片
+    private String picture;
 
 }
