@@ -2,6 +2,7 @@ package com.holy.controller;
 
 import com.holy.domain.dto.LoginFormDTO;
 import com.holy.domain.dto.RegisterFormDTO;
+import com.holy.domain.dto.UpdatePasswordFromDto;
 import com.holy.domain.po.Result;
 import com.holy.domain.po.User;
 import com.holy.domain.vo.UserLoginVO;
@@ -9,18 +10,20 @@ import com.holy.status.UserStatus;
 import com.holy.service.UserService;
 import com.holy.utils.JwtUtil;
 import com.holy.utils.Md5Util;
+import com.holy.utils.ThreadLocalUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Tag(name = "用户相关接口")
 @RestController
@@ -31,9 +34,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @Operation(summary = "用户登录接口")
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO){
+    public Result<UserLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO) {
         // 获取loginFormDTO用户登陆表单中的数据
         String username = loginFormDTO.getUsername();
         String password = loginFormDTO.getPassword();
@@ -48,9 +54,13 @@ public class UserController {
         // 生成Token
         Map<String, Object> claims = new HashMap<>();
         // Token放入用户id和用户名
-        claims.put("id",user.getId());
-        claims.put("username",user.getUsername());
+        claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
         String token = JwtUtil.getToken(claims);
+        // Token存入Redis
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        // 设置1天过期时间 与Token相同
+        operations.set(token, token, 1, TimeUnit.DAYS);
         // 封装UserLoginVO返回
         UserLoginVO userLoginVO = new UserLoginVO();
         userLoginVO.setToken(token);
@@ -78,10 +88,40 @@ public class UserController {
                 .setPassword(password)
                 .setPhone(phone);
         // 注册用户
-        if(userService.register(registerUser)) {
-            return Result.success("注册成功");
+        if (userService.register(registerUser)) {
+            return Result.success(null, "注册成功");
         }else {
             return Result.error("注册失败");
+        }
+    }
+
+    @Operation(summary = "修改密码接口")
+    @PatchMapping("/updatePassword")
+    public Result updatePassword (@RequestBody @Valid UpdatePasswordFromDto updatePasswordFromDto,
+                                  @RequestHeader("authorization") String token){
+        // 获取updatePasswordFromDto用户修改密码表单中的数据
+        String oldPassword = updatePasswordFromDto.getOldPassword();
+        String newPassword = updatePasswordFromDto.getNewPassword();
+        String rePassword = updatePasswordFromDto.getRePassword();
+        // 从ThreadLocal中取出用户信息
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        // 根据用户id拿到原密码对比
+        int id = (Integer) claims.get("id");
+        User user = userService.selectUserById(id);
+        // 原密码填写是否正确
+        if (!Md5Util.getMD5String(oldPassword).equals(user.getPassword())) return Result.error("原密码填写错误");
+        // 判断密码填写是否一致
+        if (!newPassword.equals(rePassword)) return Result.error("两次填写密码不一致");
+        // 加密密码
+        newPassword = Md5Util.getMD5String(newPassword);
+        // 更新密码
+        if (userService.updatePasswordById(id, newPassword)) {
+            // 删除Redis中的Token
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            operations.getOperations().delete(token);
+            return Result.success(null, "密码修改成功");
+        }else {
+            return Result.error("密码修改失败");
         }
     }
 }

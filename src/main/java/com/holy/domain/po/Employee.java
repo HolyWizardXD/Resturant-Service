@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class Employee implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private long id;
+    private int id;
 
     // 员工名
     private String employeeName;

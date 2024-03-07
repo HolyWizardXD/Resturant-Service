@@ -13,10 +13,10 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("dish")
-public class Dish implements Serializable {
+public class Dish implements Serializable{
 
     @TableId(value = "id", type = IdType.AUTO)
-    private long id;
+    private int id;
 
     // 菜品名称
     private String dishName;

@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class Inventory implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private long id;
+    private int id;
 
     // 原料名
     private String material;

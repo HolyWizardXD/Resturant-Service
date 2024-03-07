@@ -7,7 +7,7 @@ public class UserLoginVO {
 
     private String token;
 
-    private Long id;
+    private int id;
 
     private String username;
 
