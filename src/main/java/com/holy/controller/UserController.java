@@ -126,7 +126,6 @@ public class UserController {
         }
     }
 
-    // TODO 修改用户信息
     @Operation(summary = "修改用户信息")
     @PutMapping("/updateUserInfo")
     public Result updateUserInfo(@RequestBody @Valid UpdateUserFormDTO updateUserFormDTO) {

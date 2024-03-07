@@ -1,8 +1,9 @@
 package com.holy.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.holy.domain.po.Customer;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface CustomerMapper extends BaseMapper<CustomerMapper> {
+public interface CustomerMapper extends BaseMapper<Customer> {
 }

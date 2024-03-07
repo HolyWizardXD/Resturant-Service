@@ -14,16 +14,16 @@ import lombok.experimental.Accessors;
 public class OrderDish {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     // 顾客id
-    private int orderId;
+    private Integer orderId;
 
     // 菜品id
-    private int dishId;
+    private Integer dishId;
 
     // 数量
-    private int amount;
+    private Integer amount;
 
     // 价格
     private float price;

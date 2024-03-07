@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class Dish implements Serializable{
 
     @TableId(value = "id", type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     // 菜品名称
     private String dishName;
@@ -25,13 +25,13 @@ public class Dish implements Serializable{
     private float price;
 
     // 库存
-    private int stock;
+    private Integer stock;
 
     // 分类
     private String classify;
 
     // 状态 1 启用 2 冻结
-    private int status;
+    private Integer status;
 
     // 照片
     private String pictureUrl;

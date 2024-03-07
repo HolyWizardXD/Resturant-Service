@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Customer implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     // 顾客名称
     private String customerName;

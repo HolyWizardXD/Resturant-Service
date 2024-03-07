@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 public class Order implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     // 顾客id
-    private int customerId;
+    private Integer customerId;
 
     // 总价格
     private float totalPrice;

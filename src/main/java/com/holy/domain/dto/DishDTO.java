@@ -12,8 +12,8 @@ import lombok.Data;
 public class DishDTO {
 
     @NotNull(message = "菜品id不能为空")
-    @Schema(description = "id",type = "int", required = true)
-    private int id;
+    @Schema(description = "id",type = "Integer", required = true)
+    private Integer id;
 
     @NotBlank(message = "菜品名不能为空")
     @Schema(description = "菜品名",type = "String", required = true)
@@ -29,12 +29,12 @@ public class DishDTO {
     private String classify;
 
     @NotNull(message = "库存数量不能为空")
-    @Schema(description = "库存", type = "int", required = true)
-    private int stock;
+    @Schema(description = "库存", type = "Integer", required = true)
+    private Integer stock;
 
     @NotNull(message = "状态不能为空")
-    @Schema(description = "状态", type = "int", required = true)
-    private int status;
+    @Schema(description = "状态", type = "Integer", required = true)
+    private Integer status;
 
     @NotBlank(message = "图片不能为空")
     @Schema(description = "图片", type = "String", required = true)
