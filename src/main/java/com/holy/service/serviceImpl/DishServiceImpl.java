@@ -2,7 +2,6 @@ package com.holy.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.holy.domain.po.Dish;
 import com.holy.mapper.DishMapper;
@@ -28,12 +27,13 @@ public class DishServiceImpl implements DishService {
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         // 菜品状态为启用
         lambdaQueryWrapper.eq(Dish::getStatus, 1);
+        // 菜品库存是否足够
+        lambdaQueryWrapper.gt(Dish::getStock, 0);
         // 判断条件是否为空
         if (dishName != null) {
             // 菜品名
             lambdaQueryWrapper.like(Dish::getDishName, dishName);
         }
-        System.out.println(classify);
         if (classify != null && !classify.equals("")) {
             // 分类
             lambdaQueryWrapper.eq(Dish::getClassify, classify);
@@ -49,15 +49,17 @@ public class DishServiceImpl implements DishService {
             lambdaQueryWrapper.ge(Dish::getPrice, minPrice);
         }
         // 调用mapper
-        dishMapper.selectPage(page, lambdaQueryWrapper);
-        return page;
+        return dishMapper.selectPage(page, lambdaQueryWrapper);
     }
 
     // 查询所有菜品
     @Override
     public List<Dish> listAll() {
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 菜品状态为启用
         lambdaQueryWrapper.eq(Dish::getStatus, 1);
+        // 菜品库存是否足够
+        lambdaQueryWrapper.gt(Dish::getStock, 0);
         return dishMapper.selectList(lambdaQueryWrapper);
     }
 
@@ -83,5 +85,18 @@ public class DishServiceImpl implements DishService {
     @Override
     public boolean updatePictureUrlById(int id, String pictureUrl) {
         return dishMapper.updatePictureUrlById(id, pictureUrl) > 0;
+    }
+
+    @Override
+    public boolean deleteDishById(int dishId) {
+        return dishMapper.deleteById(dishId) > 0;
+    }
+
+    @Override
+    public Dish selectDishByName(String dishName) {
+        // 生成条件构造器 按名称查询
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getDishName, dishName);
+        return dishMapper.selectOne(lambdaQueryWrapper);
     }
 }

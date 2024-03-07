@@ -8,18 +8,15 @@ import com.holy.domain.po.Dish;
 import com.holy.domain.po.Result;
 import com.holy.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +34,11 @@ import static com.holy.common.CommonString.RedisDishKEY;
 @RequestMapping("/dish")
 public class DishController {
 
-    @Value("${dish.path}")
+    @Value("${path.dish}")
     private String path;
+
+    @Value("${path.default}")
+    private String defaultUrl;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -93,16 +93,15 @@ public class DishController {
     }
 
     @PutMapping("updateDish")
-    @Operation(summary = "修改菜品信息")
+    @Operation(summary = "修改菜品信息(不能包含图片)")
     public Result updateDish(@RequestBody @Valid DishDTO dishDTO) {
+        // 根据id取出菜品
+        Dish dish = dishService.selectDishById(dishDTO.getId());
         // 查询该菜品是否存在
-        if(dishService.selectDishById(dishDTO.getId()) == null) return Result.error("该菜品不存在");
-        // 封装Dish
-        Dish dish = new Dish();
-        dish.setId(dishDTO.getId())
-                .setDishName(dishDTO.getDishName())
+        if(dish == null) return Result.error("该菜品不存在");
+        // 封装回dish
+        dish.setDishName(dishDTO.getDishName())
                 .setClassify(dishDTO.getClassify())
-                .setPictureUrl(dishDTO.getPictureUrl())
                 .setPrice(dishDTO.getPrice())
                 .setStatus(dishDTO.getStatus())
                 .setStock(dishDTO.getStock());
@@ -119,13 +118,15 @@ public class DishController {
     }
 
     @PostMapping("addDish")
-    @Operation(summary = "新增菜品接口")
+    @Operation(summary = "新增菜品接口(图片设为默认)")
     public Result addDish(@RequestBody @Valid DishDTO dishDTO) {
+        // 根据菜品名查询菜品是否存在
+        if (dishService.selectDishByName(dishDTO.getDishName()) != null) return Result.error("菜品已经存在");
         // 封装Dish 不设置id id自增
         Dish dish = new Dish();
         dish.setDishName(dishDTO.getDishName())
                 .setClassify(dishDTO.getClassify())
-                .setPictureUrl("默认图片")
+                .setPictureUrl(defaultUrl)
                 .setPrice(dishDTO.getPrice())
                 .setStatus(dishDTO.getStatus())
                 .setStock(dishDTO.getStock());
@@ -141,6 +142,8 @@ public class DishController {
     @PostMapping("upload")
     @Operation(summary = "修改菜品图片接口")
     public Result updateDishPictureUrl(MultipartFile file, @RequestParam int dishId){
+        // 判断是否有该菜品
+        if(dishService.selectDishById(dishId) == null) return Result.error("该菜品不存在");
         // 判断文件上传类型是否合法
         String contentType = file.getContentType();
         if (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg")){
@@ -150,7 +153,7 @@ public class DishController {
         DataSize maxsize = DataSize.ofMegabytes(2);
         if(file.getSize() > maxsize.toBytes()) return Result.error("文件大小超过2MB");
         // 设置图片路径
-        String fileName = path + dishId + ".jpg";
+        String fileName = path + "dish_" + dishId + ".jpg";
         try {
             // 转存文件
             file.transferTo(new File(fileName));
@@ -163,6 +166,21 @@ public class DishController {
         Dish dish = dishService.selectDishById(dishId);
         // 修改Redis缓存文件地址
         stringRedisTemplate.opsForValue().set(RedisDishKEY + dishId, JSONUtil.toJsonStr(dish));
+        return Result.success();
+    }
+
+    @DeleteMapping("delete")
+    @Operation(summary = "删除菜品接口")
+    public Result deleteDish(@RequestParam int dishId) {
+        // 判断是否有该菜品
+        if(dishService.selectDishById(dishId) == null) return Result.error("该菜品不存在");
+        // 删除数据库中该菜品
+        dishService.deleteDishById(dishId);
+        // 判断Redis缓存中该菜品是否存在
+        if(stringRedisTemplate.opsForValue().get(RedisDishKEY + dishId) != null) {
+            // 删除Redis缓存中该菜品
+            stringRedisTemplate.delete(RedisDishKEY + dishId);
+        }
         return Result.success();
     }
 }

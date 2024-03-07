@@ -26,4 +26,5 @@ public class Inventory implements Serializable {
 
     // 照片
     private String pictureUrl;
+
 }

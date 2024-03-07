@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class DishDTO {
 
-    @NotNull(message = "菜品id不能为空")
+    @NotNull(message = "菜品id不能为空,新增时随机填写id")
     @Schema(description = "id",type = "Integer", required = true)
     private Integer id;
 
@@ -35,8 +35,4 @@ public class DishDTO {
     @NotNull(message = "状态不能为空")
     @Schema(description = "状态", type = "Integer", required = true)
     private Integer status;
-
-    @NotBlank(message = "图片不能为空")
-    @Schema(description = "图片", type = "String", required = true)
-    private String pictureUrl;
 }

@@ -18,4 +18,8 @@ public interface DishService {
     boolean addDish(Dish dish);
 
     boolean updatePictureUrlById(int id, String pictureUrl);
+
+    boolean deleteDishById(int dishId);
+
+    Dish selectDishByName(String dishName);
 }

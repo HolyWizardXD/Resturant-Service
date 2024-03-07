@@ -21,5 +21,7 @@ mybatis-plus:
     db-config:
       update-strategy: not_null
       id-type: auto
-dish:
-  path: ${restaurant.file}
+path:
+  dish: ${restaurant.file.dish}
+  inventory: ${restaurant.file.inventory}
+  default: ${restaurant.file.default}
