@@ -7,33 +7,27 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("dish")
-public class Dish implements Serializable{
+@TableName("order_dish")
+public class OrderDish {
 
     @TableId(value = "id", type = IdType.AUTO)
     private int id;
 
-    // 菜品名称
-    private String dishName;
+    // 顾客id
+    private int orderId;
+
+    // 菜品id
+    private int dishId;
+
+    // 数量
+    private int amount;
 
     // 价格
     private float price;
 
-    // 库存
-    private int stock;
-
-    // 分类
-    private String classify;
-
-    // 状态 1 启用 2 冻结
-    private int status;
-
-    // 照片
-    private String pictureUrl;
-
 }
+
+

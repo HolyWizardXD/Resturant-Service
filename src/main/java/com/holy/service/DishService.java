@@ -10,4 +10,12 @@ public interface DishService {
     IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName, Float minPrice, Float maxPrice, String classify);
 
     List<Dish> listAll();
+
+    boolean updateDish(Dish dish);
+
+    Dish selectDishById(int id);
+
+    boolean addDish(Dish dish);
+
+    boolean updatePictureUrlById(int id, String pictureUrl);
 }

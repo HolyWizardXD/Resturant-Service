@@ -1,4 +1,4 @@
-package com.holy.status;
+package com.holy.common;
 public class UserStatus {
 
     // 用户正常启用

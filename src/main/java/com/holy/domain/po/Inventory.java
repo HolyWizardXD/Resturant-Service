@@ -25,5 +25,5 @@ public class Inventory implements Serializable {
     private float stock;
 
     // 照片
-    private String picture;
+    private String pictureUrl;
 }

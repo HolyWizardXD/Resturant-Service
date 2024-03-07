@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.util.List;
 import java.util.Map;
 
+import static com.holy.common.CommonString.RedisDishKEY;
+
 @SpringBootTest
 class RestaurantApplicationTests {
 
@@ -31,6 +33,6 @@ class RestaurantApplicationTests {
         int id = 1;
         String json = "s";
         ValueOperations<String, String> dishes = stringRedisTemplate.opsForValue();
-        dishes.set("restaurant:dish:id:" + id, json);
+        dishes.set(RedisDishKEY + id, json);
     }
 }

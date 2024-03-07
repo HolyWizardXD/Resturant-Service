@@ -3,13 +3,12 @@ package com.holy.domain.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Tag(name = "修改密码表单")
 @Data
-public class UpdatePasswordFromDto {
+public class UpdatePasswordFromDTO {
 
     @NotBlank(message = "旧密码不能为空")
     @Schema(description = "旧密码",type = "String", required = true)

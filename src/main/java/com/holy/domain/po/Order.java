@@ -26,7 +26,7 @@ public class Order implements Serializable {
     private float totalPrice;
 
     // 创建时间
-    private LocalDateTime stock;
+    private LocalDateTime createTime;
 
     // 备注
     private String description;

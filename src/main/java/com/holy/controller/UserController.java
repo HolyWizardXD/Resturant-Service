@@ -2,11 +2,12 @@ package com.holy.controller;
 
 import com.holy.domain.dto.LoginFormDTO;
 import com.holy.domain.dto.RegisterFormDTO;
-import com.holy.domain.dto.UpdatePasswordFromDto;
+import com.holy.domain.dto.UpdatePasswordFromDTO;
+import com.holy.domain.dto.UpdateUserFormDTO;
 import com.holy.domain.po.Result;
 import com.holy.domain.po.User;
 import com.holy.domain.vo.UserLoginVO;
-import com.holy.status.UserStatus;
+import com.holy.common.UserStatus;
 import com.holy.service.UserService;
 import com.holy.utils.JwtUtil;
 import com.holy.utils.Md5Util;
@@ -97,7 +98,7 @@ public class UserController {
 
     @Operation(summary = "修改密码接口")
     @PatchMapping("/updatePassword")
-    public Result updatePassword (@RequestBody @Valid UpdatePasswordFromDto updatePasswordFromDto,
+    public Result updatePassword (@RequestBody @Valid UpdatePasswordFromDTO updatePasswordFromDto,
                                   @RequestHeader("authorization") String token){
         // 获取updatePasswordFromDto用户修改密码表单中的数据
         String oldPassword = updatePasswordFromDto.getOldPassword();
@@ -123,5 +124,22 @@ public class UserController {
         }else {
             return Result.error("密码修改失败");
         }
+    }
+
+    // TODO 修改用户信息
+    @Operation(summary = "修改用户信息")
+    @PutMapping("/updateUserInfo")
+    public Result updateUserInfo(@RequestBody @Valid UpdateUserFormDTO updateUserFormDTO) {
+        // 从updateUserFormDTO表单中取出用户信息
+        String username = updateUserFormDTO.getUsername();
+        String phone = updateUserFormDTO.getPhone();
+        // 从ThreadLocal中取出用户id
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        int id = (Integer) claims.get("id");
+        // 判断用户名是否重复
+        if(userService.selectUserByName(username) != null) return Result.error("该用户名已被占用");
+        // 修改用户信息
+        userService.updateUserInfoById(id, username, phone);
+        return Result.success();
     }
 }

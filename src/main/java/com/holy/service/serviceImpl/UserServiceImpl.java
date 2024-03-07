@@ -33,7 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePasswordById(int id, String newPassword) {
-        return userMapper.updatePasswordById(id,newPassword) > 0;
+        return userMapper.updatePasswordById(id, newPassword) > 0;
+    }
+
+    @Override
+    public boolean updateUserInfoById(int id, String username, String phone) {
+        return userMapper.updateUserInfoById(id, username, phone) > 0;
     }
 
 

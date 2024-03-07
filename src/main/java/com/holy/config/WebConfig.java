@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // TODO 修改拦截地址
         // 不经过token拦截器放行的地址
         registry.addInterceptor(loginInterceptor).
                 excludePathPatterns(
@@ -23,7 +24,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/v3/**",
                         "/swagger-resources/**",
                         "/webjars/**",
-                        "/doc.html"
+                        "/doc.html",
+                        "/dish/**"
                 );
     }
 }

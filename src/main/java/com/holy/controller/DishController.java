@@ -1,20 +1,27 @@
 package com.holy.controller;
 
+import cn.hutool.core.io.unit.DataSize;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.holy.domain.dto.DishDTO;
 import com.holy.domain.po.Dish;
 import com.holy.domain.po.Result;
 import com.holy.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,11 +29,16 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.holy.common.CommonString.RedisDishKEY;
+
 
 @Tag(name = "菜品相关接口")
 @RestController
 @RequestMapping("/dish")
 public class DishController {
+
+    @Value("${dish.path}")
+    private String path;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -53,7 +65,7 @@ public class DishController {
     public Result<List<Dish>> listAll(){
         List<Dish> dishes = new ArrayList<>();
         // 查询以restaurant:dish:id:开头的Redis缓存
-        Set<String> keys = stringRedisTemplate.keys("restaurant:dish:id:*");
+        Set<String> keys = stringRedisTemplate.keys(RedisDishKEY + "*");
         // 不存在 调用数据库
         if (keys.isEmpty()){
             dishes = dishService.listAll();
@@ -61,7 +73,7 @@ public class DishController {
             dishes.forEach(dish -> {
                 // 用restaurant:dish:id:#{id}作为key,Dish转换为json作为value
                 stringRedisTemplate.opsForValue().set(
-                        "restaurant:dish:id:" + dish.getId()
+                        RedisDishKEY + dish.getId()
                         ,JSONUtil.toJsonStr(dish)
                         ,6, TimeUnit.HOURS);
             });
@@ -78,5 +90,79 @@ public class DishController {
         return Result.success(dishes.stream()
                 .sorted(Comparator.comparingDouble(Dish::getId))
                 .collect(Collectors.toList()));
+    }
+
+    @PutMapping("updateDish")
+    @Operation(summary = "修改菜品信息")
+    public Result updateDish(@RequestBody @Valid DishDTO dishDTO) {
+        // 查询该菜品是否存在
+        if(dishService.selectDishById(dishDTO.getId()) == null) return Result.error("该菜品不存在");
+        // 封装Dish
+        Dish dish = new Dish();
+        dish.setId(dishDTO.getId())
+                .setDishName(dishDTO.getDishName())
+                .setClassify(dishDTO.getClassify())
+                .setPictureUrl(dishDTO.getPictureUrl())
+                .setPrice(dishDTO.getPrice())
+                .setStatus(dishDTO.getStatus())
+                .setStock(dishDTO.getStock());
+        // 修改菜品信息
+        dishService.updateDish(dish);
+        // 如果菜品启用 修改Redis中的该菜品信息
+        if(dish.getStatus() == 1) {
+            stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish));
+        }else {
+            // 不启用则删除Redis缓存
+            stringRedisTemplate.delete(RedisDishKEY + dish.getId());
+        }
+        return Result.success();
+    }
+
+    @PostMapping("addDish")
+    @Operation(summary = "新增菜品接口")
+    public Result addDish(@RequestBody @Valid DishDTO dishDTO) {
+        // 封装Dish 不设置id id自增
+        Dish dish = new Dish();
+        dish.setDishName(dishDTO.getDishName())
+                .setClassify(dishDTO.getClassify())
+                .setPictureUrl("默认图片")
+                .setPrice(dishDTO.getPrice())
+                .setStatus(dishDTO.getStatus())
+                .setStock(dishDTO.getStock());
+        // 新增菜品
+        dishService.addDish(dish);
+        // 如果菜品启用 添加到Redis中
+        if(dish.getStatus() == 1) {
+            stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish));
+        }
+        return Result.success();
+    }
+
+    @PostMapping("upload")
+    @Operation(summary = "修改菜品图片接口")
+    public Result updateDishPictureUrl(MultipartFile file, @RequestParam int dishId){
+        // 判断文件上传类型是否合法
+        String contentType = file.getContentType();
+        if (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg")){
+            return Result.error("文件类型错误");
+        }
+        // 判断文件大小是否过大
+        DataSize maxsize = DataSize.ofMegabytes(2);
+        if(file.getSize() > maxsize.toBytes()) return Result.error("文件大小超过2MB");
+        // 设置图片路径
+        String fileName = path + dishId + ".jpg";
+        try {
+            // 转存文件
+            file.transferTo(new File(fileName));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // 修改数据库文件地址
+        dishService.updatePictureUrlById(dishId, fileName);
+        // 取出修改后的菜品对象
+        Dish dish = dishService.selectDishById(dishId);
+        // 修改Redis缓存文件地址
+        stringRedisTemplate.opsForValue().set(RedisDishKEY + dishId, JSONUtil.toJsonStr(dish));
+        return Result.success();
     }
 }

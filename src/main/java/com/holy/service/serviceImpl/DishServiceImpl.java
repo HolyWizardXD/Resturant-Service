@@ -23,15 +23,18 @@ public class DishServiceImpl implements DishService {
     public IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName,
                             Float minPrice, Float maxPrice, String classify) {
         // 创建IPage对象
-        IPage<Dish> page = new Page<>(pageNum,pageSize);
+        IPage<Dish> page = new Page<>(pageNum, pageSize);
         // 创建条件构造器
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 菜品状态为启用
+        lambdaQueryWrapper.eq(Dish::getStatus, 1);
         // 判断条件是否为空
         if (dishName != null) {
             // 菜品名
             lambdaQueryWrapper.like(Dish::getDishName, dishName);
         }
-        if (classify != null) {
+        System.out.println(classify);
+        if (classify != null && !classify.equals("")) {
             // 分类
             lambdaQueryWrapper.eq(Dish::getClassify, classify);
         }
@@ -53,6 +56,32 @@ public class DishServiceImpl implements DishService {
     // 查询所有菜品
     @Override
     public List<Dish> listAll() {
-        return dishMapper.selectList(null);
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getStatus, 1);
+        return dishMapper.selectList(lambdaQueryWrapper);
+    }
+
+    // 修改菜品
+    @Override
+    public boolean updateDish(Dish dish) {
+        return dishMapper.updateById(dish) > 0;
+    }
+
+    // 通过id查询寻菜品
+    @Override
+    public Dish selectDishById(int id) {
+        return dishMapper.selectById(id);
+    }
+
+    // 添加菜品
+    @Override
+    public boolean addDish(Dish dish) {
+        return dishMapper.insert(dish) > 0;
+    }
+
+    // 修改或添加菜品图片
+    @Override
+    public boolean updatePictureUrlById(int id, String pictureUrl) {
+        return dishMapper.updatePictureUrlById(id, pictureUrl) > 0;
     }
 }

@@ -16,4 +16,5 @@ public class LoginFormDTO {
     @NotBlank(message = "密码不能为空")
     @Schema(description = "密码", type = "String", required = true)
     private String password;
+
 }

@@ -11,4 +11,6 @@ public interface UserService {
     User selectUserById(int id);
 
     boolean updatePasswordById(int id, String newPassword);
+
+    boolean updateUserInfoById(int id, String username, String phone);
 }
