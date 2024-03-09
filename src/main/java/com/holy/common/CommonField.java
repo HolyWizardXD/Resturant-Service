@@ -1,5 +1,9 @@
 package com.holy.common;
-public class UserStatus {
+
+public class CommonField {
+
+    // Redis 菜品缓存key String
+    public final static String RedisDishKEY = "restaurant:dish:id:";
 
     // 用户正常启用
     public static final Integer NORMAL = 1;

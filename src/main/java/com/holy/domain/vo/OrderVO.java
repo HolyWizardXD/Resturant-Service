@@ -1,18 +1,21 @@
 package com.holy.domain.vo;
 
-import com.holy.domain.po.OrderDish;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class OrderVO {
+
+    // 订单id
+    private Integer id;
 
     // 顾客名
     private String customerName;
 
     // 总价格
-    private float totalPrice;
+    private float allPrice;
 
     // 备注
     private String description;
@@ -20,6 +23,6 @@ public class OrderVO {
     // 订单创建时间
     private LocalDateTime createTime;
 
-    // OrderDish对象
-    private OrderDish orderDish;
+    // DishVO List
+    private List<DishVO> dishVOList;
 }

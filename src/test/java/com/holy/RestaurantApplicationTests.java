@@ -1,6 +1,5 @@
 package com.holy;
 
-import com.holy.domain.po.Dish;
 import com.holy.utils.Md5Util;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -8,10 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.holy.common.CommonString.RedisDishKEY;
+import static com.holy.common.CommonField.RedisDishKEY;
 
 @SpringBootTest
 class RestaurantApplicationTests {

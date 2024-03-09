@@ -10,24 +10,13 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("order_dish")
-public class OrderDish {
+@TableName("customer_order")
+public class CustomerOrder {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    // 顾客id
+    private Integer customerId;
+
     private Integer orderId;
-
-    // 菜品id
-    private Integer dishId;
-
-    // 数量
-    private Integer amount;
-
-    // 价格
-    private float totalPrice;
-
 }
-
-

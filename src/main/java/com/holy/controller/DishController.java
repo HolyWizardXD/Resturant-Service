@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.holy.common.CommonString.RedisDishKEY;
+import static com.holy.common.CommonField.RedisDishKEY;
 
 
 @Tag(name = "菜品相关接口")

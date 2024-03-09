@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.holy.mapper.OrderMapper">
+    <!--分页查询订单-->
+    <resultMap id="OrderVO" type="com.holy.domain.vo.OrderVO" autoMapping="true">
+        <result property="id" column="id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="allPrice" column="all_price"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="dishVOList" column="id" ofType="com.holy.domain.vo.DishVO"
+                    select="selectDish" autoMapping="true"/>
+    </resultMap>
+    <resultMap id="DishVO" type="com.holy.domain.vo.DishVO" autoMapping="true">
+        <result property="order_id" column="order_id"/>
+        <result property="dish_id" column="dish_id"/>
+        <result property="dish_name" column="dish_name"/>
+        <result property="amount" column="amount"/>
+        <result property="price" column="price"/>
+        <result property="totalPrice" column="total_price"/>
+    </resultMap>
+    <select id="list" resultMap="OrderVO">
+        select id, customer_name, all_price, description, create_time
+        from `order`
+        <where>
+            <if test="begin != null">
+                create_time &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                and create_time &lt;= #{end}
+            </if>
+        </where>
+    </select>
+    <select id="selectDish" resultMap="DishVO">
+        select order_id, dish_id, dish_name, amount, price, total_price
+        from order_dish o
+                 LEFT JOIN
+             dish d
+             on o.dish_id = d.id
+        where order_id = #{id}
+    </select>
+    <!--查询全部订单-->
+    <resultMap id="OrderAllVO" type="com.holy.domain.vo.OrderVO" autoMapping="true">
+        <result property="id" column="id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="allPrice" column="all_price"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="dishVOList" ofType="com.holy.domain.vo.DishVO" autoMapping="true">
+            <result property="order_id" column="order_id"/>
+            <result property="dish_id" column="dish_id"/>
+            <result property="dish_name" column="dish_name"/>
+            <result property="amount" column="amount"/>
+            <result property="price" column="price"/>
+            <result property="totalPrice" column="total_price"/>
+        </collection>
+    </resultMap>
+    <select id="listAll" resultMap="OrderAllVO">
+        select o.id            as id,
+               o.customer_name as customer_name,
+               o.all_price     as all_price,
+               o.description   as description,
+               o.create_time   as create_time,
+               od.order_id     as order_id,
+               od.dish_id      as dish_id,
+               d.dish_name     as dish_name,
+               od.amount       as amount,
+               d.price         as price,
+               od.total_price  as total_price
+        from `order` o
+                 INNER JOIN order_dish od
+                 INNER JOIN dish d
+                            on o.id = od.order_id and od.dish_id = d.id
+        where customer_id = #{customerId}
+    </select>
+
+
+    <!--废弃-->
+    <!--<select id="list" resultMap="OrderVO">
+        select o.id as id, o.customer_name as customer_name, o.all_price as all_price,
+        o.description as description, o.create_time as create_time, dvo.order_id as order_id,
+        dvo.dish_name as dish_name, dvo.amount as amount, dvo.price as price, dvo.total_price as total_price
+        from `order` o
+        INNER JOIN dishvo dvo
+        on o.id = dvo.order_id
+        <where>
+            <if test="begin != null">
+                create_time &gt; #{begin}
+            </if>
+            <if test="end != null">
+                and create_time &lt; #{end}
+            </if>
+        </where>
+    </select>-->
+    <!--<delete id="deleteView">
+        DROP view dishVO
+    </delete>-->
+    <!--<update id="createView">
+        create view dishVO as
+        select order_id, dish_name, amount, price, total_price
+        from order_dish o
+                 LEFT JOIN
+             dish
+             on o.dish_id = dish.id
+    </update>-->
+    <!--<select id="selectLimit" resultMap="OrderVO">
+        select o.id as id, o.customer_name as customer_name, o.all_price as all_price,
+        o.description as description, o.create_time as create_time, od.order_id as order_id,
+        d.dish_name as dish_name, od.amount as amount, d.price as price, od.total_price as total_price
+        from `order` o
+        INNER JOIN order_dish od
+        INNER JOIN dish d
+        on o.id = od.order_id and od.dish_id = d.id
+        <where>
+            <if test="begin != null">
+                create_time &gt; #{begin}
+            </if>
+            <if test="end != null">
+                and create_time &lt; #{end}
+            </if>
+        </where>
+        limit #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="countOrder" resultType="int">
+        select count(*)
+        from `order`
+    </select>-->
+</mapper>

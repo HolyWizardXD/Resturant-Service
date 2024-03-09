@@ -1,5 +1,6 @@
 package com.holy.controller;
 
+import com.holy.common.CommonField;
 import com.holy.domain.dto.LoginFormDTO;
 import com.holy.domain.dto.RegisterFormDTO;
 import com.holy.domain.dto.UpdatePasswordFromDTO;
@@ -7,7 +8,6 @@ import com.holy.domain.dto.UpdateUserFormDTO;
 import com.holy.domain.po.Result;
 import com.holy.domain.po.User;
 import com.holy.domain.vo.UserLoginVO;
-import com.holy.common.UserStatus;
 import com.holy.service.UserService;
 import com.holy.utils.JwtUtil;
 import com.holy.utils.Md5Util;
@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static com.holy.common.CommonField.FROZEN;
 
 @Tag(name = "用户相关接口")
 @RestController
@@ -49,7 +52,7 @@ public class UserController {
         // 用户是否存在
         if(user == null) return Result.error("用户不存在");
         // 校验用户的状态
-        if(user.getStatus() == UserStatus.FROZEN) return Result.error("用户被冻结");
+        if(Objects.equals(user.getStatus(), FROZEN)) return Result.error("用户被冻结");
         // 校验密码
         if(!Md5Util.getMD5String(password).equals(user.getPassword())) return Result.error("密码错误");
         // 生成Token

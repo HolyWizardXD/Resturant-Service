@@ -23,7 +23,7 @@ public class Order implements Serializable {
     private Integer customerId;
 
     // 总价格
-    private float totalPrice;
+    private float allPrice;
 
     // 创建时间
     private LocalDateTime createTime;
