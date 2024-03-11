@@ -4,16 +4,22 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.holy.domain.po.Order;
 import com.holy.domain.vo.OrderVO;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
-    IPage<OrderVO> list(IPage<OrderVO> page, LocalDateTime begin, LocalDateTime end);
+    IPage<OrderVO> list(IPage<OrderVO> page, String customerName, LocalDateTime begin, LocalDateTime end);
 
     List<OrderVO> listAll(Integer customerId);
+
+    int insertOrder(Order order);
+
+    OrderVO selectByOrderId(Integer orderId);
 
     /*
      废弃

@@ -99,4 +99,14 @@ public class DishServiceImpl implements DishService {
         lambdaQueryWrapper.eq(Dish::getDishName, dishName);
         return dishMapper.selectOne(lambdaQueryWrapper);
     }
+
+    @Override
+    public Integer selectDishStockById(Integer dishId) {
+        return dishMapper.selectDishStockById(dishId);
+    }
+
+    @Override
+    public float selectDishPriceById(Integer dishId) {
+        return dishMapper.selectDishPriceById(dishId);
+    }
 }

@@ -4,6 +4,7 @@
     <!--分页查询订单-->
     <resultMap id="OrderVO" type="com.holy.domain.vo.OrderVO" autoMapping="true">
         <result property="id" column="id"/>
+        <result property="table" column="table"/>
         <result property="customerName" column="customer_name"/>
         <result property="allPrice" column="all_price"/>
         <result property="description" column="description"/>
@@ -12,7 +13,6 @@
                     select="selectDish" autoMapping="true"/>
     </resultMap>
     <resultMap id="DishVO" type="com.holy.domain.vo.DishVO" autoMapping="true">
-        <result property="order_id" column="order_id"/>
         <result property="dish_id" column="dish_id"/>
         <result property="dish_name" column="dish_name"/>
         <result property="amount" column="amount"/>
@@ -20,11 +20,14 @@
         <result property="totalPrice" column="total_price"/>
     </resultMap>
     <select id="list" resultMap="OrderVO">
-        select id, customer_name, all_price, description, create_time
+        select id, `table`, customer_name, all_price, description, create_time
         from `order`
         <where>
+            <if test="end != null">
+                customer_name = #{customerName}
+            </if>
             <if test="begin != null">
-                create_time &gt;= #{begin}
+                and create_time &gt;= #{begin}
             </if>
             <if test="end != null">
                 and create_time &lt;= #{end}
@@ -32,22 +35,21 @@
         </where>
     </select>
     <select id="selectDish" resultMap="DishVO">
-        select order_id, dish_id, dish_name, amount, price, total_price
+        select dish_id, dish_name, amount, price, total_price
         from order_dish o
                  LEFT JOIN
              dish d
              on o.dish_id = d.id
         where order_id = #{id}
     </select>
-    <!--查询全部订单-->
     <resultMap id="OrderAllVO" type="com.holy.domain.vo.OrderVO" autoMapping="true">
         <result property="id" column="id"/>
+        <result property="table" column="table"/>
         <result property="customerName" column="customer_name"/>
         <result property="allPrice" column="all_price"/>
         <result property="description" column="description"/>
         <result property="createTime" column="create_time"/>
         <collection property="dishVOList" ofType="com.holy.domain.vo.DishVO" autoMapping="true">
-            <result property="order_id" column="order_id"/>
             <result property="dish_id" column="dish_id"/>
             <result property="dish_name" column="dish_name"/>
             <result property="amount" column="amount"/>
@@ -55,13 +57,33 @@
             <result property="totalPrice" column="total_price"/>
         </collection>
     </resultMap>
-    <select id="listAll" resultMap="OrderAllVO">
+    <!--查询单个订单-->
+    <select id="selectByOrderId" resultMap="OrderAllVO">
         select o.id            as id,
+               o.`table`       as `table`,
                o.customer_name as customer_name,
                o.all_price     as all_price,
                o.description   as description,
                o.create_time   as create_time,
-               od.order_id     as order_id,
+               od.dish_id      as dish_id,
+               d.dish_name     as dish_name,
+               od.amount       as amount,
+               d.price         as price,
+               od.total_price  as total_price
+        from `order` o
+                 INNER JOIN order_dish od
+                 INNER JOIN dish d
+                            on o.id = od.order_id and od.dish_id = d.id
+        where order_id = #{orderId}
+    </select>
+    <!--查询全部订单-->
+    <select id="listAll" resultMap="OrderAllVO">
+        select o.id            as id,
+               o.`table`       as `table`,
+               o.customer_name as customer_name,
+               o.all_price     as all_price,
+               o.description   as description,
+               o.create_time   as create_time,
                od.dish_id      as dish_id,
                d.dish_name     as dish_name,
                od.amount       as amount,
@@ -73,6 +95,14 @@
                             on o.id = od.order_id and od.dish_id = d.id
         where customer_id = #{customerId}
     </select>
+
+    <insert id="insertOrder" parameterType="com.holy.domain.po.Order" useGeneratedKeys="true" keyProperty="id">
+        insert into `order`(`table`,customer_id,customer_name,create_time,all_price,description)
+        values(#{table},#{customerId},#{customerName},now(),#{allPrice},#{description})
+        <!--<selectKey keyProperty="id" order="AFTER" resultType="Integer">
+            select LAST_INSERT_ID()
+        </selectKey>-->
+    </insert>
 
 
     <!--废弃-->

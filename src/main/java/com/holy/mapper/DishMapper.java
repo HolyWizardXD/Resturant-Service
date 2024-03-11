@@ -12,4 +12,9 @@ public interface DishMapper extends BaseMapper<Dish> {
     @Update("update dish set picture_url=#{pictureUrl} where id=#{id}")
     int updatePictureUrlById(int id,String pictureUrl);
 
+    @Select("select stock from dish where id=#{id}")
+    Integer selectDishStockById(Integer id);
+
+    @Select("select price from dish where id=#{id}")
+    float selectDishPriceById(Integer id);
 }

@@ -22,4 +22,8 @@ public interface DishService {
     boolean deleteDishById(int dishId);
 
     Dish selectDishByName(String dishName);
+
+    Integer selectDishStockById(Integer dishId);
+
+    float selectDishPriceById(Integer dishId);
 }

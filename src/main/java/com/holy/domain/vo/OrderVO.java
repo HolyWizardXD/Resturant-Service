@@ -11,6 +11,9 @@ public class OrderVO {
     // 订单id
     private Integer id;
 
+    // 餐桌号
+    private Integer table;
+
     // 顾客名
     private String customerName;
 

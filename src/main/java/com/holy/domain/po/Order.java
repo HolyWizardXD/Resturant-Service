@@ -19,8 +19,14 @@ public class Order implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    // 餐桌号
+    private Integer table;
+
     // 顾客id
     private Integer customerId;
+
+    // 顾客名
+    private String customerName;
 
     // 总价格
     private float allPrice;
