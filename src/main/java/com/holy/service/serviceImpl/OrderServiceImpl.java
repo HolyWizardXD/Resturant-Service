@@ -50,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectByOrderId(orderId);
     }
 
+    // 事务注释
     @Override
     @Transactional
     public synchronized boolean createOrder(OrderDTO orderDTO) {

@@ -45,6 +45,7 @@ public class OrderController {
     @GetMapping("/selectByOrderId")
     @Operation(summary = "根据订单id查询订单")
     public Result<OrderVO> selectByOrderId(@RequestParam(required = true) Integer orderId) {
+        // 调用订单接口 返回Order对象
         OrderVO orderVO = orderService.selectById(orderId);
         if(orderVO == null) return Result.error("该订单不存在");
         return Result.success(orderVO);
