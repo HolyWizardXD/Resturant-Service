@@ -20,12 +20,13 @@ public class WebConfig implements WebMvcConfigurer {
                 excludePathPatterns(
                         "/user/login",
                         "/user/register",
+                        "/customer/login",
+                        "/customer/register",
                         "/v2/**",
                         "/v3/**",
                         "/swagger-resources/**",
                         "/webjars/**",
-                        "/doc.html",
-                        "/**"
+                        "/doc.html"
                 );
     }
 }

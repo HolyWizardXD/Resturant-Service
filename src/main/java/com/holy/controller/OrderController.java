@@ -6,6 +6,7 @@ import com.holy.domain.dto.OrderDishDTO;
 import com.holy.domain.po.Order;
 import com.holy.domain.po.Result;
 import com.holy.domain.vo.OrderVO;
+import com.holy.service.CustomerService;
 import com.holy.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
+
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
     private OrderService orderService;
@@ -39,6 +43,7 @@ public class OrderController {
     @GetMapping("/selectByCustomerId")
     @Operation(summary = "根据顾客id查询订单接口")
     public Result<List<OrderVO>> selectById(@RequestParam(required = true) Integer customerId) {
+        if(customerService.selectById(customerId) == null) return Result.error("该顾客不存在");
         return Result.success(orderService.selectByCustomerId(customerId));
     }
 

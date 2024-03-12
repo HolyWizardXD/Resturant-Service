@@ -1,6 +1,5 @@
 package com.holy.controller;
 
-import com.holy.common.CommonField;
 import com.holy.domain.dto.LoginFormDTO;
 import com.holy.domain.dto.RegisterFormDTO;
 import com.holy.domain.dto.UpdatePasswordFromDTO;
@@ -79,10 +78,13 @@ public class UserController {
         // 获取registerFormDTO用户注册表单中的数据
         String username = registerFormDTO.getUsername();
         String password = registerFormDTO.getPassword();
+        String rePassword = registerFormDTO.getRePassword();
         String phone = registerFormDTO.getPhone();
+        // 判断密码填写是否一致
+        if (!password.equals(rePassword)) return Result.error("两次填写密码不一致");
         // 查询用户是否已经存在
         User user = userService.selectUserByName(username);
-        if (user == null) {return Result.error("该用户已经存在");}
+        if (user != null) return Result.error("用户名已存在");
         // 加密密码
         password = Md5Util.getMD5String(password);
         // 封装User对象
@@ -102,7 +104,7 @@ public class UserController {
     @Operation(summary = "修改密码接口")
     @PatchMapping("/updatePassword")
     public Result updatePassword (@RequestBody @Valid UpdatePasswordFromDTO updatePasswordFromDto,
-                                  @RequestHeader("authorization") String token){
+                                  @RequestHeader("Authorization") String token){
         // 获取updatePasswordFromDto用户修改密码表单中的数据
         String oldPassword = updatePasswordFromDto.getOldPassword();
         String newPassword = updatePasswordFromDto.getNewPassword();
@@ -129,9 +131,10 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "修改用户信息")
+    @Operation(summary = "修改用户信息接口")
     @PutMapping("/updateUserInfo")
-    public Result updateUserInfo(@RequestBody @Valid UpdateUserFormDTO updateUserFormDTO) {
+    public Result updateUserInfo(@RequestBody @Valid UpdateUserFormDTO updateUserFormDTO,
+                                 @RequestHeader("Authorization") String token) {
         // 从updateUserFormDTO表单中取出用户信息
         String username = updateUserFormDTO.getUsername();
         String phone = updateUserFormDTO.getPhone();
@@ -140,8 +143,21 @@ public class UserController {
         int id = (Integer) claims.get("id");
         // 判断用户名是否重复
         if(userService.selectUserByName(username) != null) return Result.error("该用户名已被占用");
+        // 判断修改内容
+        User user = userService.selectUserById(id);
+        if(username == null && phone == null) return Result.error("无参数");
+        // 用户名无需修改
+        if(username == null) username = user.getUsername();
+        // 手机号无需修改
+        if(phone == null) phone = user.getPhone();
         // 修改用户信息
-        userService.updateUserInfoById(id, username, phone);
-        return Result.success();
+        if(userService.updateUserInfoById(id, username, phone)) {
+            // 删除Redis中的Token
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            operations.getOperations().delete(token);
+            return Result.success(null, "用户信息修改成功");
+        }else {
+            return Result.error("用户信息修改失败");
+        }
     }
 }

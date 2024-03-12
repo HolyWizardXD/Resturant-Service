@@ -57,7 +57,6 @@ public class OrderServiceImpl implements OrderService {
         // 取出orderDTO中的数据
         Integer table = orderDTO.getTable();
         Integer customerId = orderDTO.getCustomerId();
-        String customerName = orderDTO.getCustomerName();
         String description = orderDTO.getDescription();
         // 取出orderDTO中的List<OrderDishDTO>
         List<OrderDishDTO> orderDishDTOList = orderDTO.getOrderDishDTOList();
@@ -76,7 +75,6 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setTable(table)
                 .setCustomerId(customerId)
-                .setCustomerName(customerName)
                 .setDescription(description)
                 .setAllPrice(allPrice);
         // 插入order表

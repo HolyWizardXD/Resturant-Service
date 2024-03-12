@@ -18,7 +18,7 @@ class RestaurantApplicationTests {
 
     @Test
     void MD5Test() {
-        System.out.println(Md5Util.getMD5String("admin"));
+        System.out.println(Md5Util.getMD5String("111222"));
     }
 
     @Resource

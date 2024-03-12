@@ -20,10 +20,6 @@ public class OrderDTO {
     @Schema(description = "顾客id", type = "Integer", required = true)
     private Integer customerId;
 
-    @NotBlank(message = "顾客名不能为空")
-    @Schema(description = "顾客名", type = "String", required = true)
-    private String customerName;
-
     @Schema(description = "备注", type = "String")
     private String description;
 

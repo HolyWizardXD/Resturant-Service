@@ -20,17 +20,18 @@
         <result property="totalPrice" column="total_price"/>
     </resultMap>
     <select id="list" resultMap="OrderVO">
-        select id, `table`, customer_name, all_price, description, create_time
-        from `order`
+        select o.id as id, `table`, c.customer_name, all_price, description, o.create_time
+        from `order` o, customer c
         <where>
-            <if test="end != null">
-                customer_name = #{customerName}
+            c.id = o.customer_id
+            <if test="customerName != null">
+                and c.customer_name like CONCAT('%',#{customerName},'%')
             </if>
             <if test="begin != null">
-                and create_time &gt;= #{begin}
+                and o.create_time &gt;= #{begin}
             </if>
             <if test="end != null">
-                and create_time &lt;= #{end}
+                and o.create_time &lt;= #{end}
             </if>
         </where>
     </select>
@@ -61,7 +62,7 @@
     <select id="selectByOrderId" resultMap="OrderAllVO">
         select o.id            as id,
                o.`table`       as `table`,
-               o.customer_name as customer_name,
+               c.customer_name as customer_name,
                o.all_price     as all_price,
                o.description   as description,
                o.create_time   as create_time,
@@ -74,13 +75,14 @@
                  INNER JOIN order_dish od
                  INNER JOIN dish d
                             on o.id = od.order_id and od.dish_id = d.id
-        where order_id = #{orderId}
+           ,customer c
+        where order_id = #{orderId} and c.id = o.customer_id
     </select>
     <!--查询全部订单-->
     <select id="listAll" resultMap="OrderAllVO">
         select o.id            as id,
                o.`table`       as `table`,
-               o.customer_name as customer_name,
+               c.customer_name as customer_name,
                o.all_price     as all_price,
                o.description   as description,
                o.create_time   as create_time,
@@ -93,7 +95,8 @@
                  INNER JOIN order_dish od
                  INNER JOIN dish d
                             on o.id = od.order_id and od.dish_id = d.id
-        where customer_id = #{customerId}
+            ,customer c
+        where customer_id = #{customerId} and c.id = o.customer_id
     </select>
 
     <insert id="insertOrder" parameterType="com.holy.domain.po.Order" useGeneratedKeys="true" keyProperty="id">

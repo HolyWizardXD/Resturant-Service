@@ -21,6 +21,11 @@ public class RegisterFormDTO {
     @Length(message = "密码长度区间{min}-{max}",min = 8, max = 20)
     private String password;
 
+    @NotBlank(message = "重复密码不能为空")
+    @Schema(description = "重复新密码", type = "String", required =true)
+    @Length(message = "密码长度区间{min}-{max}",min = 8, max = 20)
+    private String rePassword;
+
     @NotBlank(message = "注册手机号码不能为空")
     @Schema(description = "手机号", type = "String", required =true)
     @Pattern(regexp = "(?:(?:\\+|00)86)?1\\d{10}", message = "手机号格式错误")

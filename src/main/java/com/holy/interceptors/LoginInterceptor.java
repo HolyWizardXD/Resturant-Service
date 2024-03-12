@@ -23,7 +23,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 令牌验证
         // 从请求头中获取Token
-        String token = request.getHeader("authorization");
+        String token = request.getHeader("Authorization");
         // 校验token
         try {
             // 从Redis中获取相同Token

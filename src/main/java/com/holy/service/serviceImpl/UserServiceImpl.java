@@ -18,6 +18,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User selectUserByName(String username) {
+        // 调用链式条件构造器 根据用户名名返回单个用户
         return new LambdaQueryChainWrapper<>(userMapper).eq(User::getUsername, username).one();
     }
 
