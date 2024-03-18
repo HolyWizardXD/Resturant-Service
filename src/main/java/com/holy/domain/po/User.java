@@ -27,7 +27,7 @@ public class User implements Serializable {
     // 手机号
     private String phone;
 
-    // 使用状态 1 正常 2 冻结
+    // 使用状态 1 正常 2 注销或禁用
     private Integer status;
 
 }

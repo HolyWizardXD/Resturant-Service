@@ -8,6 +8,6 @@ public class CommonField {
     // 用户正常启用
     public static final Integer NORMAL = 1;
 
-    // 用户被冻结
-    public static final Integer FROZEN = 0;
+    // 用户注销或禁用
+    public static final Integer OFF = 2;
 }
