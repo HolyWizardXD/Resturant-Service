@@ -17,4 +17,7 @@ public interface DishMapper extends BaseMapper<Dish> {
 
     @Select("select price from dish where id=#{id}")
     float selectDishPriceById(Integer id);
+
+    @Update("update dish set stock=stock-#{amount} where id=#{id}")
+    Integer deductStock(Integer id, Integer amount);
 }

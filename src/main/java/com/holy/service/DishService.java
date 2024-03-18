@@ -26,4 +26,6 @@ public interface DishService {
     Integer selectDishStockById(Integer dishId);
 
     float selectDishPriceById(Integer dishId);
+
+    Integer deductStock(Integer dishId, Integer amount);
 }

@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -80,13 +82,14 @@ public class OrderServiceImpl implements OrderService {
         // 插入order表
         orderMapper.insertOrder(order);
         int orderId = order.getId();
-        // 遍历插入order_dish表
+        // 遍历插入order_dish表 扣减库存
         for (OrderDishDTO orderDishDTO : orderDishDTOList) {
             OrderDish orderDish = new OrderDish();
             orderDish.setOrderId(orderId)
                     .setDishId(orderDishDTO.getDishId())
                     .setAmount(orderDishDTO.getAmount())
                     .setTotalPrice(orderDishDTO.getAmount() * dishService.selectDishPriceById(orderDishDTO.getDishId()));
+            dishService.deductStock(orderDishDTO.getDishId(),orderDishDTO.getAmount());
             orderDishMapper.insert(orderDish);
         }
         return true;

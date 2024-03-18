@@ -42,5 +42,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateUserInfoById(id, username, phone) > 0;
     }
 
+    @Override
+    public boolean logoff(int id) {
+        return userMapper.updateStatusById(id);
+    }
+
+    @Override
+    public String selectPhoneById(int id) {
+        return new LambdaQueryChainWrapper<>(userMapper).eq(User::getId,id).one().getPhone();
+    }
+
 
 }

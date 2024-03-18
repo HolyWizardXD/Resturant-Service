@@ -1,5 +1,6 @@
 package com.holy.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.holy.domain.dto.LoginFormDTO;
 import com.holy.domain.dto.RegisterFormDTO;
 import com.holy.domain.dto.UpdatePasswordFromDTO;
@@ -42,7 +43,11 @@ public class UserController {
 
     @Operation(summary = "用户登录接口")
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO) {
+    public Result<UserLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO,
+                                     @RequestHeader(value = "Authorization",required = false) String hasToken) {
+        // 判断是否已经登陆
+        if(hasToken == null) hasToken = "token" + RandomUtil.randomString(8);
+        if(Boolean.TRUE.equals(stringRedisTemplate.hasKey(hasToken))) return Result.error("请勿重复登录");
         // 获取loginFormDTO用户登陆表单中的数据
         String username = loginFormDTO.getUsername();
         String password = loginFormDTO.getPassword();
@@ -69,7 +74,34 @@ public class UserController {
         userLoginVO.setToken(token);
         userLoginVO.setId(user.getId());
         userLoginVO.setUsername(user.getUsername());
-        return Result.success(userLoginVO);
+        return Result.success(userLoginVO, "登陆成功");
+    }
+
+    @Operation(summary = "用户登出接口")
+    @DeleteMapping("/logout")
+    public Result logout(@RequestHeader(value = "Authorization",required = true) String token) {
+        stringRedisTemplate.delete(token);
+        return Result.success(null, "登出成功");
+    }
+
+    @Operation(summary = "查询用户电话接口")
+    @GetMapping("/getPhone")
+    public Result<String> getPhone() {
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        int id = (Integer) claims.get("id");
+        return Result.success(userService.selectPhoneById(id));
+    }
+
+    @Operation(summary = "用户注销接口")
+    @DeleteMapping("/logoff")
+    public Result logoff(@RequestParam Integer userId,@RequestHeader(value = "Authorization",required = true) String token) {
+        // 从ThreadLocal中取出token中解析出用户id
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        int id = (Integer) claims.get("id");
+        if(id != userId) return Result.error("注销失败,解析错误");
+        userService.logoff(id);
+        stringRedisTemplate.delete(token);
+        return Result.success(null, "登出成功");
     }
 
     @Operation(summary = "用户注册接口")
@@ -125,7 +157,7 @@ public class UserController {
             // 删除Redis中的Token
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
             operations.getOperations().delete(token);
-            return Result.success(null, "密码修改成功");
+            return Result.success(null,"密码修改成功,请重新登录");
         }else {
             return Result.error("密码修改失败");
         }

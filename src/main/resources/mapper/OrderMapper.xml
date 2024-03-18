@@ -34,6 +34,7 @@
                 and o.create_time &lt;= #{end}
             </if>
         </where>
+        order by o.id
     </select>
     <select id="selectDish" resultMap="DishVO">
         select dish_id, dish_name, amount, price, total_price
@@ -100,8 +101,8 @@
     </select>
 
     <insert id="insertOrder" parameterType="com.holy.domain.po.Order" useGeneratedKeys="true" keyProperty="id">
-        insert into `order`(`table`,customer_id,customer_name,create_time,all_price,description)
-        values(#{table},#{customerId},#{customerName},now(),#{allPrice},#{description})
+        insert into `order`(`table`,customer_id,create_time,all_price,description)
+        values(#{table},#{customerId},now(),#{allPrice},#{description})
         <!--<selectKey keyProperty="id" order="AFTER" resultType="Integer">
             select LAST_INSERT_ID()
         </selectKey>-->

@@ -109,4 +109,9 @@ public class DishServiceImpl implements DishService {
     public float selectDishPriceById(Integer dishId) {
         return dishMapper.selectDishPriceById(dishId);
     }
+
+    @Override
+    public Integer deductStock(Integer dishId, Integer amount) {
+        return dishMapper.deductStock(dishId,amount);
+    }
 }
