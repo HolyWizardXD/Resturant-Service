@@ -16,6 +16,8 @@ public interface OrderService {
 
     OrderVO selectById(Integer orderId);
 
+    boolean updateOrderStatus(Integer orderId);
+
     // 手写分页查询(废弃)
     // IPage<OrderVO> selectLimit(Integer pageNum, Integer pageSize, LocalDateTime begin, LocalDateTime end);
 }

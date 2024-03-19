@@ -31,6 +31,9 @@ public class Order implements Serializable {
     // 创建时间
     private LocalDateTime createTime;
 
+    // 状态 0 未出餐 1 已出餐
+    private Integer status;
+
     // 备注
     private String description;
 

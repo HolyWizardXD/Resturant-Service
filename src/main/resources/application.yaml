@@ -1,6 +1,12 @@
 server:
   port: 8080
 spring:
+  rabbitmq:
+    host: ${restaurant.rabbitmq.host}
+    port: ${restaurant.rabbitmq.port}
+    virtual-host: ${restaurant.rabbitmq.virtual-host}
+    username: ${restaurant.rabbitmq.username}
+    password: ${restaurant.rabbitmq.password}
   data:
     redis:
       host: ${restaurant.redis.host}

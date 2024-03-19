@@ -7,6 +7,7 @@ import com.holy.domain.vo.OrderVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +21,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     int insertOrder(Order order);
 
     OrderVO selectByOrderId(Integer orderId);
+
+    int updateOrderStatus(Integer id);
 
     /*
      废弃

@@ -9,6 +9,7 @@
         <result property="allPrice" column="all_price"/>
         <result property="description" column="description"/>
         <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
         <collection property="dishVOList" column="id" ofType="com.holy.domain.vo.DishVO"
                     select="selectDish" autoMapping="true"/>
     </resultMap>
@@ -20,7 +21,7 @@
         <result property="totalPrice" column="total_price"/>
     </resultMap>
     <select id="list" resultMap="OrderVO">
-        select o.id as id, `table`, c.customer_name, all_price, description, o.create_time
+        select o.id as id, `table`, c.customer_name, all_price, description, o.create_time, o.status
         from `order` o, customer c
         <where>
             c.id = o.customer_id
@@ -34,7 +35,7 @@
                 and o.create_time &lt;= #{end}
             </if>
         </where>
-        order by o.id
+        order by o.create_time DESC
     </select>
     <select id="selectDish" resultMap="DishVO">
         select dish_id, dish_name, amount, price, total_price
@@ -50,6 +51,7 @@
         <result property="customerName" column="customer_name"/>
         <result property="allPrice" column="all_price"/>
         <result property="description" column="description"/>
+        <result property="status" column="status"/>
         <result property="createTime" column="create_time"/>
         <collection property="dishVOList" ofType="com.holy.domain.vo.DishVO" autoMapping="true">
             <result property="dish_id" column="dish_id"/>
@@ -67,6 +69,7 @@
                o.all_price     as all_price,
                o.description   as description,
                o.create_time   as create_time,
+               o.status        as status,
                od.dish_id      as dish_id,
                d.dish_name     as dish_name,
                od.amount       as amount,
@@ -87,6 +90,7 @@
                o.all_price     as all_price,
                o.description   as description,
                o.create_time   as create_time,
+               o.status        as status,
                od.dish_id      as dish_id,
                d.dish_name     as dish_name,
                od.amount       as amount,
@@ -107,6 +111,10 @@
             select LAST_INSERT_ID()
         </selectKey>-->
     </insert>
+
+    <update id="updateOrderStatus">
+        update `order` set status=1 where id=#{id}
+    </update>
 
 
     <!--废弃-->

@@ -11,9 +11,12 @@ import com.holy.mapper.OrderDishMapper;
 import com.holy.mapper.OrderMapper;
 import com.holy.service.DishService;
 import com.holy.service.OrderService;
+import jakarta.annotation.Resource;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -25,6 +28,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderDishMapper orderDishMapper;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -50,6 +56,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderVO selectById(Integer orderId) {
         return orderMapper.selectByOrderId(orderId);
+    }
+
+    @Override
+    public boolean updateOrderStatus(Integer orderId) {
+        return orderMapper.updateOrderStatus(orderId) > 0;
     }
 
     // 事务注释
@@ -89,9 +100,12 @@ public class OrderServiceImpl implements OrderService {
                     .setDishId(orderDishDTO.getDishId())
                     .setAmount(orderDishDTO.getAmount())
                     .setTotalPrice(orderDishDTO.getAmount() * dishService.selectDishPriceById(orderDishDTO.getDishId()));
-            dishService.deductStock(orderDishDTO.getDishId(),orderDishDTO.getAmount());
+            dishService.deductStock(orderDishDTO.getDishId(), orderDishDTO.getAmount());
             orderDishMapper.insert(orderDish);
         }
+        // RabbitMQ发送订单消息
+        String msg = orderDTO.getTable() + "号桌有新的订单";
+        rabbitTemplate.convertAndSend("order.fanout", "", msg);
         return true;
     }
 

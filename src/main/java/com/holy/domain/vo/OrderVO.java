@@ -26,6 +26,9 @@ public class OrderVO {
     // 订单创建时间
     private LocalDateTime createTime;
 
+    // 状态 0 未出餐 1 已出餐
+    private Integer status;
+
     // DishVO List
     private List<DishVO> dishVOList;
 }

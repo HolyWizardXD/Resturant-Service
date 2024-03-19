@@ -9,6 +9,7 @@ import com.holy.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,5 +63,14 @@ public class OrderController {
             return Result.error("库存不足");
         }
         return Result.success();
+    }
+
+    @PutMapping("/status")
+    @Operation(summary = "改变出餐状态接口")
+    public Result status(@RequestParam Integer orderId){
+        // 判断订单是否存在
+        if(orderService.selectById(orderId) == null) return Result.error("该订单不存在");
+        orderService.updateOrderStatus(orderId);
+        return Result.success(null ,"出餐成功");
     }
 }
