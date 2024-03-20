@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.geom.Arc2D;
+
 @Tag(name = "员工相关接口")
 @RestController
 @RequestMapping("/employee")
@@ -36,11 +38,10 @@ public class EmployeeController {
         Employee employee = new Employee();
         employee.setEmployeeName(employeeDTO.getEmployeeName())
                 .setSalary(employeeDTO.getSalary())
-                .setPhone(employeeDTO.getPhone())
-                .setStatus(employeeDTO.getStatus());
+                .setPhone(employeeDTO.getPhone());
         // 调用员工服务的新增
         employeeService.addEmployee(employee);
-        return Result.success();
+        return Result.success(null,"新增成功");
     }
 
     @PutMapping("/updateEmployee")
@@ -53,19 +54,29 @@ public class EmployeeController {
         // 封装回employee
         employee.setEmployeeName(employeeDTO.getEmployeeName())
                 .setSalary(employeeDTO.getSalary())
-                .setPhone(employeeDTO.getPhone())
-                .setStatus(employeeDTO.getStatus());
+                .setPhone(employeeDTO.getPhone());
         employeeService.updateEmployee(employee);
-        return null;
+        return Result.success(null,"员工修改成功");
     }
 
-    @DeleteMapping("deleteEmployee")
+    @DeleteMapping("/deleteEmployee")
     @Operation(summary = "删除员工")
     public Result deleteEmployee(@RequestParam Integer employeeId) {
         // 判断该员工是否存在
         if (employeeService.selectEmployeeById(employeeId) == null) return Result.error("该员工不存在");
         // 删除员工
         employeeService.deleteEmployeeById(employeeId);
+        return Result.success();
+    }
+
+    @PutMapping("/status")
+    @Operation(summary = "改变员工状态接口")
+    public Result status(@RequestParam Integer id,@RequestParam Integer status){
+        // 判断员工是否存在
+        if(employeeService.selectEmployeeById(id) == null) return Result.error("该员工不存在");
+        // 判断status是否合法
+        if(status != 1 && status != 2) return Result.error("状态值不合法");
+        employeeService.updateOrderStatus(id,status);
         return Result.success();
     }
 }

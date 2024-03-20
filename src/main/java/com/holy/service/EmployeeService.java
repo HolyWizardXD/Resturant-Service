@@ -13,4 +13,6 @@ public interface EmployeeService {
     Employee selectEmployeeById(Integer id);
 
     boolean deleteEmployeeById(Integer id);
+
+    boolean updateOrderStatus(Integer id, Integer status);
 }

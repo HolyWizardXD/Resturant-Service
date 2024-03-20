@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class EmployeeDTO {
 
-    @NotNull(message = "员工id不能为空,新增时随机填写id")
+    @NotNull(message = "原员工名不能为空,新增时随机填写id")
     @Schema(description = "id",type = "Integer", required = true)
     private Integer id;
 
@@ -30,7 +30,4 @@ public class EmployeeDTO {
     @Pattern(regexp = "(?:(?:\\+|00)86)?1\\d{10}", message = "手机号格式错误")
     private String phone;
 
-    @NotNull(message = "状态不能为空")
-    @Schema(description = "状态", type = "Integer", required = true)
-    private Integer status;
 }

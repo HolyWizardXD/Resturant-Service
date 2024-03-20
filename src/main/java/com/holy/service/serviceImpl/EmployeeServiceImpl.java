@@ -50,4 +50,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public boolean deleteEmployeeById(Integer id) {
         return employeeMapper.deleteById(id) > 0;
     }
+
+
+    @Override
+    public boolean updateOrderStatus(Integer id, Integer status) {
+        return employeeMapper.updateStatusById(id,status);
+    }
 }
