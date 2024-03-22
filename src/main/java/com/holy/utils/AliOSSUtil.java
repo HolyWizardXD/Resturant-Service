@@ -12,11 +12,11 @@ import java.io.InputStream;
 public class AliOSSUtil {
 
     // Endpoint以华东1（杭州）为例，其它Region请按实际情况填写。
-    private static final String ENDPOINT = "https://oss-cn-beijing.aliyuncs.com";
-    private static final String ENDPOINT_WITHOUT_HTTP = "oss-cn-beijing.aliyuncs.com";
+    private static final String ENDPOINT = "";
+    private static final String ENDPOINT_WITHOUT_HTTP = "";
     // 从环境变量中获取访问凭证。运行本代码示例之前，请确保已设置环境变量OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。
-    private static final String ACCESS_KEY_ID = "LTAI5tNV9WtiKDdS6WafcHRx";
-    private static final String ACCESS_KEY_SECRET = "DeLTWySuaeNOaJDD5j7ZJS0G3dtLly";
+    private static final String ACCESS_KEY_ID = "";
+    private static final String ACCESS_KEY_SECRET = "";
     // 填写Bucket名称
     private static final String BUCKET_NAME = "restaurant-picture";
 
