@@ -3,6 +3,7 @@ package com.holy.controller;
 import cn.hutool.core.io.unit.DataSize;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.holy.AliOSSUtil;
 import com.holy.domain.dto.DishDTO;
 import com.holy.domain.po.Dish;
 import com.holy.domain.po.Result;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.holy.AliOSSUtil.DEFAULT_URL;
 import static com.holy.common.CommonField.RedisDishKEY;
 
 
@@ -33,12 +35,6 @@ import static com.holy.common.CommonField.RedisDishKEY;
 @RestController
 @RequestMapping("/dish")
 public class DishController {
-
-    @Value("${path.dish}")
-    private String path;
-
-    @Value("${path.default}")
-    private String defaultUrl;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -126,7 +122,7 @@ public class DishController {
         Dish dish = new Dish();
         dish.setDishName(dishDTO.getDishName())
                 .setClassify(dishDTO.getClassify())
-                .setPictureUrl(defaultUrl)
+                .setPictureUrl(DEFAULT_URL)
                 .setPrice(dishDTO.getPrice())
                 .setStatus(dishDTO.getStatus())
                 .setStock(dishDTO.getStock());
@@ -141,9 +137,9 @@ public class DishController {
 
     @PostMapping("upload")
     @Operation(summary = "修改菜品图片接口")
-    public Result updateDishPictureUrl(MultipartFile file, @RequestParam int dishId){
+    public Result updateDishPictureUrl(MultipartFile file, @RequestParam int id){
         // 判断是否有该菜品
-        if(dishService.selectDishById(dishId) == null) return Result.error("该菜品不存在");
+        if(dishService.selectDishById(id) == null) return Result.error("该菜品不存在");
         // 判断文件上传类型是否合法
         String contentType = file.getContentType();
         if (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg")){
@@ -152,20 +148,22 @@ public class DishController {
         // 判断文件大小是否过大
         DataSize maxsize = DataSize.ofMegabytes(2);
         if(file.getSize() > maxsize.toBytes()) return Result.error("文件大小超过2MB");
-        // 设置图片路径
-        String fileName = path + "dish_" + dishId + ".jpg";
+        // 重命名文件
+        String fileName = "dish_" + id + file.getOriginalFilename().substring(
+                file.getOriginalFilename().lastIndexOf("."));
+        String url = "";
         try {
-            // 转存文件
-            file.transferTo(new File(fileName));
-        } catch (IOException e) {
+            // 转存文件到AliOSS云服务器
+            url = AliOSSUtil.uploadFile(fileName,file.getInputStream());
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         // 修改数据库文件地址
-        dishService.updatePictureUrlById(dishId, fileName);
+        dishService.updatePictureUrlById(id, url);
         // 取出修改后的菜品对象
-        Dish dish = dishService.selectDishById(dishId);
+        Dish dish = dishService.selectDishById(id);
         // 修改Redis缓存文件地址
-        stringRedisTemplate.opsForValue().set(RedisDishKEY + dishId, JSONUtil.toJsonStr(dish));
+        stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dish));
         return Result.success();
     }
 

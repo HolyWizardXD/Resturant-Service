@@ -2,6 +2,7 @@ package com.holy.controller;
 
 import cn.hutool.core.io.unit.DataSize;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.holy.AliOSSUtil;
 import com.holy.domain.dto.InventoryDTO;
 import com.holy.domain.po.Inventory;
 import com.holy.domain.po.Result;
@@ -10,28 +11,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import static com.holy.AliOSSUtil.DEFAULT_URL;
 
 @Tag(name = "原料相关接口")
 @RestController
 @RequestMapping("/inventory")
 public class InventoryController {
 
-    @Value("${path.inventory}")
-    private String path;
-
-    @Value("${path.default}")
-    private String defaultUrl;
-
     @Autowired
     private InventoryService inventoryService;
 
-    @GetMapping("list")
+    @GetMapping("/list")
     @Operation(summary = "分页查询原料列表接口")
     public Result<IPage<Inventory>> list (
             Integer pageNum, Integer pageSize,
@@ -41,7 +34,7 @@ public class InventoryController {
         return Result.success(iPage);
     }
 
-    @PostMapping("addInventory")
+    @PostMapping("/addInventory")
     @Operation(summary = "新增原料接口")
     public Result addInventory(@RequestBody @Valid InventoryDTO inventoryDTO) {
         // 查询原料是否存在
@@ -52,12 +45,12 @@ public class InventoryController {
         Inventory inventory = new Inventory();
         inventory.setMaterial(inventoryDTO.getMaterial())
                 .setStock(inventoryDTO.getStock())
-                .setPictureUrl(defaultUrl);
+                .setPictureUrl(DEFAULT_URL);
         inventoryService.addInventory(inventory);
-        return Result.success();
+        return Result.success(null,"原料新增成功");
     }
 
-    @PutMapping("updateInventory")
+    @PutMapping("/updateInventory")
     @Operation(summary = "修改原料接口")
     public Result updateInventory(@RequestBody @Valid InventoryDTO inventoryDTO) {
         // 根据id查询Inventory
@@ -69,24 +62,24 @@ public class InventoryController {
                 .setStock(inventoryDTO.getStock());
         // 修改原料信息
         inventoryService.updateInventory(inventory);
-        return Result.success();
+        return Result.success(null,"原料修改成功");
     }
 
-    @DeleteMapping("deleteInventory")
+    @DeleteMapping("/deleteInventory")
     @Operation(summary = "删除原料接口")
     public Result deleteInventory(@RequestParam Integer inventoryId) {
         // 判断是否有该原料
         if(inventoryService.selectInventoryById(inventoryId) == null) return Result.error("该原料不存在");
         // 删除原料
         inventoryService.deleteInventory(inventoryId);
-        return Result.success();
+        return Result.success(null, "原料删除成功");
     }
 
-    @PostMapping("upload")
+    @PostMapping("/upload")
     @Operation(summary = "修改原料图片接口")
-    public Result updateInventoryPictureUrl(MultipartFile file, @RequestParam int inventoryId) {
+    public Result updateInventoryPictureUrl(@RequestParam Integer id, MultipartFile file) {
         // 判断是否有该原料
-        if(inventoryService.selectInventoryById(inventoryId) == null) return Result.error("该原料不存在");
+        if(inventoryService.selectInventoryById(id) == null) return Result.error("该原料不存在");
         // 判断文件上传类型是否合法
         String contentType = file.getContentType();
         if (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg")){
@@ -95,16 +88,18 @@ public class InventoryController {
         // 判断文件大小是否过大
         DataSize maxsize = DataSize.ofMegabytes(2);
         if(file.getSize() > maxsize.toBytes()) return Result.error("文件大小超过2MB");
-        // 设置图片路径
-        String fileName = path + "inventory_" + inventoryId + ".jpg";
+        // 重命名文件
+        String fileName = "inventory_" + id + file.getOriginalFilename().substring(
+                file.getOriginalFilename().lastIndexOf("."));
+        String url = "";
         try {
-            // 转存文件
-            file.transferTo(new File(fileName));
-        } catch (IOException e) {
+            // 转存文件到AliOSS云服务器
+            url = AliOSSUtil.uploadFile(fileName,file.getInputStream());
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         // 修改数据库文件地址
-        inventoryService.updatePictureUrlById(inventoryId, fileName);
-        return Result.success();
+        inventoryService.updatePictureUrlById(id, url);
+        return Result.success(url,"图片上传成功");
     }
 }
