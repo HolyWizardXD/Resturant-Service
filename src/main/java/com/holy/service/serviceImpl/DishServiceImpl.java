@@ -19,16 +19,11 @@ public class DishServiceImpl implements DishService {
 
     // 按照可选菜品名 最小价格 最高价格 分类 分页查询菜品
     @Override
-    public IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName,
-                            Float minPrice, Float maxPrice, String classify) {
+    public IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName, String classify) {
         // 创建IPage对象
         IPage<Dish> page = new Page<>(pageNum, pageSize);
         // 创建条件构造器
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        // 菜品状态为启用
-        lambdaQueryWrapper.eq(Dish::getStatus, 1);
-        // 菜品库存是否足够
-        lambdaQueryWrapper.gt(Dish::getStock, 0);
         // 判断条件是否为空
         if (dishName != null) {
             // 菜品名
@@ -37,16 +32,6 @@ public class DishServiceImpl implements DishService {
         if (classify != null && !classify.equals("")) {
             // 分类
             lambdaQueryWrapper.eq(Dish::getClassify, classify);
-        }
-        if (minPrice != null && maxPrice != null) {
-            // 价格区间
-            lambdaQueryWrapper.between(Dish::getPrice, minPrice, maxPrice);
-        } else if (maxPrice != null) {
-            // 最大价格
-            lambdaQueryWrapper.le(Dish::getPrice, maxPrice);
-        }else if (minPrice != null) {
-            // 最小价格
-            lambdaQueryWrapper.ge(Dish::getPrice, minPrice);
         }
         // 调用mapper
         return dishMapper.selectPage(page, lambdaQueryWrapper);

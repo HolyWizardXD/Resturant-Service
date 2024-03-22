@@ -47,12 +47,10 @@ public class DishController {
     public Result<IPage<Dish>> list (
             Integer pageNum, Integer pageSize,
             @RequestParam(required = false) String dishName,
-            @RequestParam(required = false) Float minPrice,
-            @RequestParam(required = false) Float maxPrice,
             @RequestParam(required = false) String classify
             ){
         // 调用菜品服务的分页查询
-        IPage<Dish> iPage = dishService.list(pageNum, pageSize, dishName, minPrice, maxPrice, classify);
+        IPage<Dish> iPage = dishService.list(pageNum, pageSize, dishName, classify);
         return Result.success(iPage);
     }
 
@@ -88,7 +86,7 @@ public class DishController {
                 .collect(Collectors.toList()));
     }
 
-    @PutMapping("updateDish")
+    @PutMapping("/updateDish")
     @Operation(summary = "修改菜品信息(不能包含图片)")
     public Result updateDish(@RequestBody @Valid DishDTO dishDTO) {
         // 根据id取出菜品
@@ -113,7 +111,7 @@ public class DishController {
         return Result.success();
     }
 
-    @PostMapping("addDish")
+    @PostMapping("/addDish")
     @Operation(summary = "新增菜品接口(图片设为默认)")
     public Result addDish(@RequestBody @Valid DishDTO dishDTO) {
         // 根据菜品名查询菜品是否存在
@@ -135,7 +133,7 @@ public class DishController {
         return Result.success();
     }
 
-    @PostMapping("upload")
+    @PostMapping("/upload")
     @Operation(summary = "修改菜品图片接口")
     public Result updateDishPictureUrl(MultipartFile file, @RequestParam int id){
         // 判断是否有该菜品
@@ -167,7 +165,7 @@ public class DishController {
         return Result.success();
     }
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     @Operation(summary = "删除菜品接口")
     public Result deleteDish(@RequestParam int dishId) {
         // 判断是否有该菜品

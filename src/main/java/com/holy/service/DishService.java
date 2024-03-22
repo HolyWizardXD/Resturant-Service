@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DishService {
 
-    IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName, Float minPrice, Float maxPrice, String classify);
+    IPage<Dish> list(Integer pageNum, Integer pageSize, String dishName, String classify);
 
     List<Dish> listAll();
 

@@ -46,7 +46,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "顾客登录接口")
-    @PostMapping("login")
+    @PostMapping("/login")
     public Result<CustomerLoginVO> login(@RequestBody @Valid LoginFormDTO loginFormDTO) { // 复用用户登录表单
         // 获取loginFormDTO用户登陆表单中的数据
         String customerName = loginFormDTO.getUsername();
@@ -76,7 +76,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "顾客注册接口")
-    @PostMapping("register")
+    @PostMapping("/register")
     public Result register(@RequestBody @Valid RegisterFormDTO registerFormDTO) {
         // 获取registerFormDTO用户注册表单中的数据
         String customerName = registerFormDTO.getUsername();
