@@ -177,6 +177,17 @@ public class DishController {
             // 删除Redis缓存中该菜品
             stringRedisTemplate.delete(RedisDishKEY + dishId);
         }
+        return Result.success(null, "删除菜品成功");
+    }
+
+    @PutMapping("/status")
+    @Operation(summary = "修改状态接口")
+    public Result status(@RequestParam Integer id,@RequestParam Integer status) {
+        // 判断菜品是否存在
+        if(dishService.selectDishById(id) == null) return Result.error("该菜品不存在");
+        // 判断status是否合法
+        if(status != 1 && status != 2) return Result.error("状态值不合法");
+        dishService.updateDishStatus(id,status);
         return Result.success();
     }
 }

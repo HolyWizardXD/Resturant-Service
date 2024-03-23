@@ -20,7 +20,7 @@ public class AliOSSUtil {
     // 填写Bucket名称
     private static final String BUCKET_NAME = "restaurant-picture";
 
-    public static final String DEFAULT_URL = "https://restaurant-picture.oss-cn-beijing.aliyuncs.com/default.jpg";
+    public static final String DEFAULT_URL = "https://restaurant-picture.oss-cn-beijing.aliyuncs.com/default.png";
 
     public static String uploadFile(String objectName, InputStream inputStream) throws Exception {
 

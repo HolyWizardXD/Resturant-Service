@@ -14,5 +14,5 @@ public interface EmployeeService {
 
     boolean deleteEmployeeById(Integer id);
 
-    boolean updateOrderStatus(Integer id, Integer status);
+    boolean updateEmployeeStatus(Integer id, Integer status);
 }

@@ -99,4 +99,9 @@ public class DishServiceImpl implements DishService {
     public Integer deductStock(Integer dishId, Integer amount) {
         return dishMapper.deductStock(dishId,amount);
     }
+
+    @Override
+    public boolean updateDishStatus(Integer id, Integer status) {
+        return dishMapper.updateStatusById(id, status) > 0;
+    }
 }

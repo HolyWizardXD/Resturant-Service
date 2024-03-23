@@ -28,4 +28,6 @@ public interface DishService {
     float selectDishPriceById(Integer dishId);
 
     Integer deductStock(Integer dishId, Integer amount);
+
+    boolean updateDishStatus(Integer id, Integer status);
 }

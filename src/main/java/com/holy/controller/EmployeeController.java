@@ -76,7 +76,7 @@ public class EmployeeController {
         if(employeeService.selectEmployeeById(id) == null) return Result.error("该员工不存在");
         // 判断status是否合法
         if(status != 1 && status != 2) return Result.error("状态值不合法");
-        employeeService.updateOrderStatus(id,status);
+        employeeService.updateEmployeeStatus(id,status);
         return Result.success();
     }
 }
