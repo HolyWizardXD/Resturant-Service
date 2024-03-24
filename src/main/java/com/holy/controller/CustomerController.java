@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.holy.domain.dto.*;
 import com.holy.domain.po.Customer;
 import com.holy.domain.po.Result;
-import com.holy.domain.po.User;
 import com.holy.domain.vo.CustomerLoginVO;
+import com.holy.domain.vo.CustomerVO;
 import com.holy.service.CustomerService;
 import com.holy.utils.JwtUtil;
 import com.holy.utils.Md5Util;
@@ -37,11 +37,11 @@ public class CustomerController {
 
     @GetMapping("/list")
     @Operation(summary = "分页查询顾客接口")
-    public Result<IPage<Customer>> list(
+    public Result<IPage<CustomerVO>> list(
             Integer pageNum, Integer pageSize,
             @RequestParam(required = false) String customerName) {
         // 调用顾客服务的分页查询
-        IPage<Customer> page = customerService.list(pageNum, pageSize, customerName);
+        IPage<CustomerVO> page = customerService.list(pageNum, pageSize, customerName);
         return Result.success(page);
     }
 

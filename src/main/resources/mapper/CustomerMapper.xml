@@ -1,3 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.holy.mapper.CustomerMapper" />
+<mapper namespace="com.holy.mapper.CustomerMapper">
+    <select id="list" resultType="com.holy.domain.vo.CustomerVO">
+        select id,customer_name as customerName,phone,create_time as createTime
+        from customer
+        <where>
+            <if test="customerName != null">
+                customer_name like CONCAT('%',#{customerName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

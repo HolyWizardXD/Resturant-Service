@@ -3,6 +3,7 @@ package com.holy.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.holy.domain.dto.OrderDTO;
 import com.holy.domain.po.Result;
+import com.holy.domain.vo.CustomerCountVO;
 import com.holy.domain.vo.OrderVO;
 import com.holy.service.CustomerService;
 import com.holy.service.OrderService;
@@ -53,6 +54,23 @@ public class OrderController {
         OrderVO orderVO = orderService.selectById(orderId);
         if(orderVO == null) return Result.error("该订单不存在");
         return Result.success(orderVO);
+    }
+
+    @GetMapping("/count")
+    @Operation(summary = "根据订单id查询订单数量以及金额")
+    public Result<CustomerCountVO> count(@RequestParam(required = true) Integer customerId) {
+
+        // 调用订单接口 返回Order对象
+        CustomerCountVO countVO = new CustomerCountVO();
+        // 查看顾客是否消费过
+        if(orderService.selectByCustomerId(customerId).isEmpty()) {
+            countVO.setCustomerOrderCount(0);
+            countVO.setCustomerTotalPrice(0);
+            return Result.error("顾客未进行过消费");
+        }
+        countVO.setCustomerOrderCount(orderService.selectCountByCustomerId(customerId));
+        countVO.setCustomerTotalPrice(orderService.selectPriceByCustomerId(customerId));
+        return Result.success(countVO);
     }
 
     @PostMapping("/createOrder")

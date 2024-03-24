@@ -1,6 +1,7 @@
 package com.holy.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.holy.domain.dto.OrderDTO;
 import com.holy.domain.dto.OrderDishDTO;
@@ -16,12 +17,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -43,8 +41,7 @@ public class OrderServiceImpl implements OrderService {
         // 创建IPage对象
         IPage<OrderVO> iPage = new Page<>(pageNum, pageSize);
         // 把iPage传入Mapper 自动拦截分页
-        iPage = orderMapper.list(iPage, customerName, begin, end);
-        return iPage;
+        return orderMapper.list(iPage, customerName, begin, end);
     }
 
     @Override
@@ -61,6 +58,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean updateOrderStatus(Integer orderId) {
         return orderMapper.updateOrderStatus(orderId) > 0;
+    }
+
+    @Override
+    public Integer selectCountByCustomerId(Integer customerId) {
+        return orderMapper.selectCountByCustomerId(customerId);
+    }
+
+    @Override
+    public float selectPriceByCustomerId(Integer customerId) {
+        return orderMapper.selectPriceByCustomerId(customerId);
     }
 
     // 事务注释
