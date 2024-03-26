@@ -64,7 +64,7 @@ public class UserController {
         // Token放入用户id和用户名
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
-        String token = JwtUtil.getToken(claims);
+        String token = JwtUtil.getToken(claims, false);
         // Token存入Redis
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
         // 设置1天过期时间 与Token相同

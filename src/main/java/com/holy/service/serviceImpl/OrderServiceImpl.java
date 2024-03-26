@@ -1,5 +1,6 @@
 package com.holy.service.serviceImpl;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,11 +16,14 @@ import com.holy.service.OrderService;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.holy.common.CommonField.RedisDishKEY;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -29,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -107,7 +114,13 @@ public class OrderServiceImpl implements OrderService {
                     .setDishId(orderDishDTO.getDishId())
                     .setAmount(orderDishDTO.getAmount())
                     .setTotalPrice(orderDishDTO.getAmount() * dishService.selectDishPriceById(orderDishDTO.getDishId()));
+            // 扣减数据库库存
             dishService.deductStock(orderDishDTO.getDishId(), orderDishDTO.getAmount());
+            // 扣减redis库存
+            stringRedisTemplate.opsForValue().set(
+                    RedisDishKEY + orderDishDTO.getDishId(),
+                    JSONUtil.toJsonStr(dishService.selectDishById(orderDishDTO.getDishId())));
+            // 存入订单菜品关联表
             orderDishMapper.insert(orderDish);
         }
         // RabbitMQ发送订单消息

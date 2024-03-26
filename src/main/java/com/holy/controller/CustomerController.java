@@ -62,11 +62,11 @@ public class CustomerController {
         // Token放入用户id和用户名
         claims.put("id", customer.getId());
         claims.put("customerName", customer.getCustomerName());
-        String token = JwtUtil.getToken(claims);
+        String token = JwtUtil.getToken(claims, true);
         // Token存入Redis
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-        // 设置1天过期时间 与Token相同
-        operations.set(token, token, 1, TimeUnit.DAYS);
+        // 设置30天过期时间 与Token相同
+        operations.set(token, token, 30, TimeUnit.DAYS);
         // 封装CustomerLoginVO返回
         CustomerLoginVO customerLoginVO = new CustomerLoginVO();
         customerLoginVO.setToken(token);
