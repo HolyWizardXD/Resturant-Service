@@ -12,7 +12,3 @@ restaurant:
     virtual-host: /
     username: guest
     password: guest
-  file:
-    dish: D:/JAVA/Restaurant/src/main/resources/static/dish/
-    inventory: D:/JAVA/Restaurant/src/main/resources/static/inventory/
-    default: D:/JAVA/Restaurant/src/main/resources/static/default.jpg

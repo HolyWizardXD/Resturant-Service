@@ -14,4 +14,6 @@ public class DishVO {
     private Integer amount;
 
     private String totalPrice;
+
+    private String pictureUrl;
 }

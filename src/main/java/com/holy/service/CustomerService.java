@@ -16,4 +16,6 @@ public interface CustomerService {
     boolean updatePasswordById(int id, String newPassword);
 
     boolean updateCustomerById(int id, String customerName, String phone);
+
+    Customer selectByPhone(String phone);
 }

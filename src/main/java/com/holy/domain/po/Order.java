@@ -19,7 +19,7 @@ public class Order implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    // 餐桌号
+    // 餐桌号 0表示打包
     private Integer table;
 
     // 顾客id

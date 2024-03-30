@@ -23,6 +23,8 @@ public interface OrderService {
 
     float selectPriceByCustomerId(Integer customerId);
 
+    boolean hasOrder(Integer customerId);
+
     // 手写分页查询(废弃)
     // IPage<OrderVO> selectLimit(Integer pageNum, Integer pageSize, LocalDateTime begin, LocalDateTime end);
 }

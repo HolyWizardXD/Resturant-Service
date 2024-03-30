@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   rabbitmq:
     host: ${restaurant.rabbitmq.host}
@@ -28,7 +28,3 @@ mybatis-plus:
     db-config:
       update-strategy: not_null
       id-type: auto
-path:
-  dish: ${restaurant.file.dish}
-  inventory: ${restaurant.file.inventory}
-  default: ${restaurant.file.default}

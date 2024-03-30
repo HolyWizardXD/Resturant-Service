@@ -2,7 +2,7 @@ package com.holy.controller;
 
 import cn.hutool.core.io.unit.DataSize;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.holy.AliOSSUtil;
+import com.holy.utils.AliOSSUtil;
 import com.holy.domain.dto.InventoryDTO;
 import com.holy.domain.po.Inventory;
 import com.holy.domain.po.Result;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.holy.AliOSSUtil.DEFAULT_URL;
+import static com.holy.utils.AliOSSUtil.DEFAULT_URL;
 
 @Tag(name = "原料相关接口")
 @RestController

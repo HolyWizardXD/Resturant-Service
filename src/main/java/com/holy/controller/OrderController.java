@@ -1,5 +1,6 @@
 package com.holy.controller;
 
+import ch.qos.logback.core.model.INamedModel;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.holy.domain.dto.OrderDTO;
 import com.holy.domain.po.Result;
@@ -90,5 +91,12 @@ public class OrderController {
         if(orderService.selectById(orderId) == null) return Result.error("该订单不存在");
         orderService.updateOrderStatus(orderId);
         return Result.success(null ,"出餐成功");
+    }
+
+    @GetMapping("/hasOrder")
+    @Operation(summary = "查看一个用户是否有订单(弃用)")
+    public Result<Boolean> hasOrder(@RequestParam Integer customerId){
+        // boolean flag = orderService.hasOrder(customerId);
+        return Result.success();
     }
 }

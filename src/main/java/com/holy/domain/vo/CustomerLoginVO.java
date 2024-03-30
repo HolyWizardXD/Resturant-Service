@@ -2,6 +2,8 @@ package com.holy.domain.vo;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class CustomerLoginVO {
 
@@ -9,6 +11,9 @@ public class CustomerLoginVO {
 
     private int id;
 
-    private String customerName;
+    private String username;
 
+    private String phone;
+
+    private LocalDateTime createTime;
 }

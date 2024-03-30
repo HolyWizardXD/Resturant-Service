@@ -28,6 +28,9 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("select count(*) from `order` o where o.customer_id = #{customerId}")
     Integer selectCountByCustomerId(Integer customerId);
 
+    @Select("select count(*) from `order` where customer_id=#{customerId}")
+    Integer orderCountByCustomerId(Integer customerId);
+
     /*
      废弃
      List<OrderVO> selectLimit(Integer pageSize, Integer offset, LocalDateTime begin, LocalDateTime end);

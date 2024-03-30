@@ -50,4 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.updateCustomerById(id, customerName, phone) > 0;
     }
 
+    @Override
+    public Customer selectByPhone(String phone) {
+        return new LambdaQueryChainWrapper<>(Customer.class).eq(Customer::getPhone, phone).one();
+    }
+
 }

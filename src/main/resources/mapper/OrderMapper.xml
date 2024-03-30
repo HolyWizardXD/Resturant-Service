@@ -59,6 +59,7 @@
             <result property="amount" column="amount"/>
             <result property="price" column="price"/>
             <result property="totalPrice" column="total_price"/>
+            <result property="pictureUrl" column="picture_url"/>
         </collection>
     </resultMap>
     <!--查询单个订单-->
@@ -74,13 +75,15 @@
                d.dish_name     as dish_name,
                od.amount       as amount,
                d.price         as price,
-               od.total_price  as total_price
+               od.total_price  as total_price,
+               d.picture_url as picture_url
         from `order` o
                  INNER JOIN order_dish od
                  INNER JOIN dish d
                             on o.id = od.order_id and od.dish_id = d.id
-           ,customer c
-        where order_id = #{orderId} and c.id = o.customer_id
+           , customer c
+        where order_id = #{orderId}
+          and c.id = o.customer_id
     </select>
     <!--查询全部订单-->
     <select id="listAll" resultMap="OrderAllVO">
@@ -95,13 +98,16 @@
                d.dish_name     as dish_name,
                od.amount       as amount,
                d.price         as price,
-               od.total_price  as total_price
+               od.total_price  as total_price,
+               d.picture_url   as picture_url
         from `order` o
                  INNER JOIN order_dish od
                  INNER JOIN dish d
                             on o.id = od.order_id and od.dish_id = d.id
-            ,customer c
-        where customer_id = #{customerId} and c.id = o.customer_id
+           , customer c
+        where customer_id = #{customerId}
+          and c.id = o.customer_id
+        order by o.create_time DESC
     </select>
 
     <insert id="insertOrder" parameterType="com.holy.domain.po.Order" useGeneratedKeys="true" keyProperty="id">
@@ -113,7 +119,9 @@
     </insert>
 
     <update id="updateOrderStatus">
-        update `order` set status=1 where id=#{id}
+        update `order`
+        set status=1
+        where id = #{id}
     </update>
 
 

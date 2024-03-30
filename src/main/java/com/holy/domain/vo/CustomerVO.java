@@ -1,10 +1,12 @@
 package com.holy.domain.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
 public class CustomerVO {
     // 顾客id
     private Integer id;

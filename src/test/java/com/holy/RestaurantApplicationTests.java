@@ -1,5 +1,6 @@
 package com.holy;
 
+import com.holy.utils.EncryptUtil;
 import com.holy.utils.Md5Util;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -42,5 +43,11 @@ class RestaurantApplicationTests {
             Thread.sleep(1000);
             rabbitTemplate.convertAndSend("order.fanout", "", i +"号桌有新的订单");
         }
+    }
+
+    @Test
+    void testEncryptPhone() {
+        String phone = "17616544400";
+        System.out.println(EncryptUtil.encryptPhone(phone));
     }
 }

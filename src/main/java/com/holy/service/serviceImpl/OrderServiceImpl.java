@@ -77,6 +77,11 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectPriceByCustomerId(customerId);
     }
 
+    @Override
+    public boolean hasOrder(Integer customerId) {
+        return orderMapper.orderCountByCustomerId(customerId) > 0;
+    }
+
     // 事务注释
     @Override
     @Transactional
@@ -87,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
         String description = orderDTO.getDescription();
         // 取出orderDTO中的List<OrderDishDTO>
         List<OrderDishDTO> orderDishDTOList = orderDTO.getOrderDishDTOList();
+        if(orderDishDTOList.isEmpty()) return false;
         // 判断库存是否足够
         for (OrderDishDTO orderDishDTO : orderDishDTOList) {
             if (orderDishDTO.getAmount() > dishService.selectDishStockById(orderDishDTO.getDishId())) {
