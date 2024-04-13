@@ -56,6 +56,8 @@ public class DishController {
         Set<String> keys = stringRedisTemplate.keys(RedisDishKEY + "*");
         // 不存在 调用数据库
         if (keys.isEmpty()) {
+            // 存入TTL标识
+            stringRedisTemplate.opsForValue().set("TTL_SIGN","TTL_SIGN",12,TimeUnit.HOURS);
             dishes = dishService.listAll();
             // 存入Redis
             dishes.forEach(dish -> {
@@ -63,7 +65,7 @@ public class DishController {
                 stringRedisTemplate.opsForValue().set(
                         RedisDishKEY + dish.getId()
                         , JSONUtil.toJsonStr(dish)
-                        , 24, TimeUnit.HOURS);
+                        , 12, TimeUnit.HOURS);
             });
         } else {
             // 存在 取出Redis缓存
@@ -104,7 +106,9 @@ public class DishController {
         // 如果菜品启用 并且redis中有数据 更新Redis中的该菜品信息
         if (stringRedisTemplate.opsForValue().get(RedisDishKEY + dish.getId()) != null) {
             if (dish.getStatus() == 1) {
-                stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish));
+                // 获取到TTL标识
+                Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
+                stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish), ttl, TimeUnit.SECONDS);
             } else {
                 // 不启用则删除Redis缓存
                 stringRedisTemplate.delete(RedisDishKEY + dish.getId());
@@ -131,7 +135,9 @@ public class DishController {
         // 如果菜品启用 并且redis中有数据 添加到Redis中
         if (stringRedisTemplate.opsForValue().get(RedisDishKEY + dish.getId()) != null) {
             if (dish.getStatus() == 1) {
-                stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish));
+                // 获取到TTL标识
+                Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
+                stringRedisTemplate.opsForValue().set(RedisDishKEY + dish.getId(), JSONUtil.toJsonStr(dish), ttl, TimeUnit.SECONDS);
             }
         }
         return Result.success();
@@ -166,7 +172,9 @@ public class DishController {
         if (stringRedisTemplate.opsForValue().get(RedisDishKEY + id) != null) {
             Dish dish = dishService.selectDishById(id);
             // 修改Redis缓存文件地址
-            stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dish));
+            // 获取到TTL标识
+            Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
+            stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dish), ttl, TimeUnit.SECONDS);
         }
         return Result.success();
     }
@@ -196,10 +204,12 @@ public class DishController {
         dishService.updateDishStatus(id, status);
         // 如果redis能取到数据
         if (stringRedisTemplate.opsForValue().get(RedisDishKEY + id) != null) {
-            if (status == 1) {
+            if (status == 2) {
                 stringRedisTemplate.delete(RedisDishKEY + id);
-            } else if (status == 2) {
-                stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dishService.selectDishById(id)));
+            } else {
+                // 获取到TTL标识
+                Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
+                stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dishService.selectDishById(id)), ttl, TimeUnit.SECONDS);
             }
         }
         return Result.success();

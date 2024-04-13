@@ -30,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/doc.html",
-                        "/dish/listAll"
+                        "/dish/listByClassify"
                 );
     }
 }

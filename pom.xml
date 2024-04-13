@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.holy</groupId>
-    <artifactId>service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>restaurant</artifactId>
+    <version>service</version>
     <name>Restaurant</name>
     <description>Restaurant</description>
     <properties>

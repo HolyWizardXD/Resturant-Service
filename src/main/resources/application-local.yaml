@@ -1,14 +1,15 @@
 restaurant:
   db:
-    host: localhost
+    host: 123.56.137.180
     username: root
     password: 2354818484
   redis:
-    host: localhost
+    host: 123.56.137.180
     port: 6379
+    password: 2354818484
   rabbitmq:
-    host: localhost
+    host: 123.56.137.180
     port: 5672
     virtual-host: /
-    username: guest
-    password: guest
+    username: holy
+    password: 2354818484

@@ -1,0 +1,14 @@
+restaurant:
+  db:
+    host: mysql
+    password: 2354818484
+  redis:
+    host: redis
+    port: 6379
+    password: 2354818484
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    virtual-host: /
+    username: holy
+    password: 2354818484

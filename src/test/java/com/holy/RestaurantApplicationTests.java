@@ -28,10 +28,6 @@ class RestaurantApplicationTests {
 
     @Test
     void RedisTest(){
-        int id = 1;
-        String json = "s";
-        ValueOperations<String, String> dishes = stringRedisTemplate.opsForValue();
-        dishes.set(RedisDishKEY + id, json);
     }
 
     @Resource

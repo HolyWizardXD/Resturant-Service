@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 spring:
   rabbitmq:
     host: ${restaurant.rabbitmq.host}
@@ -11,6 +11,7 @@ spring:
     redis:
       host: ${restaurant.redis.host}
       port: ${restaurant.redis.port}
+      password: ${restaurant.redis.password}
   application:
     name: Restaurant
   profiles:
@@ -18,7 +19,7 @@ spring:
   datasource:
     url: jdbc:mysql://${restaurant.db.host}:3306/restaurant?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${restaurant.db.username}
+    username: root
     password: ${restaurant.db.password}
 mybatis-plus:
   configuration:
