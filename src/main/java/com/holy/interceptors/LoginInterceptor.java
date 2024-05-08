@@ -45,10 +45,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        // 清空ThreadLocal
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Object handler, Exception ex) throws Exception {
+        // 清空ThreadLocal 防止内存泄漏
         ThreadLocalUtil.remove();
     }
-
-
 }

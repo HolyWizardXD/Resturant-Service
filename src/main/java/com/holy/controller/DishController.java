@@ -211,6 +211,10 @@ public class DishController {
                 Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
                 stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dishService.selectDishById(id)), ttl, TimeUnit.SECONDS);
             }
+        } else if(stringRedisTemplate.opsForValue().get("TTL_SIGN") != null){
+            // 获取到TTL标识
+            Long ttl = stringRedisTemplate.getExpire("TTL_SIGN");
+            stringRedisTemplate.opsForValue().set(RedisDishKEY + id, JSONUtil.toJsonStr(dishService.selectDishById(id)), ttl, TimeUnit.SECONDS);
         }
         return Result.success();
     }
